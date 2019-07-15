@@ -241,7 +241,7 @@ public class Mutator {
             if (jsonProperty.getValue().isIntegralNumber()) {
                 objectNode.put(jsonProperty.getKey(), jsonProperty.getValue().longValue() + (random.nextBoolean() ? deltaInt : -deltaInt));
             } else if (jsonProperty.getValue().isFloatingPointNumber()) {
-                objectNode.put(jsonProperty.getKey(), jsonProperty.getValue().longValue() + (random.nextBoolean() ? random.nextFloat() : -random.nextFloat()));
+                objectNode.put(jsonProperty.getKey(), jsonProperty.getValue().doubleValue() + (random.nextBoolean() ? random.nextFloat() : -random.nextFloat()));
             } else if (jsonProperty.getValue().isTextual()) {
                 objectNode.put(jsonProperty.getKey(), mutateString(jsonProperty.getValue().asText()));
             } else if (jsonProperty.getValue().isBoolean()) {
@@ -258,7 +258,7 @@ public class Mutator {
             if (jsonNode.isIntegralNumber()) {
                 arrayNode.set(index, new LongNode(jsonNode.longValue() + (random.nextBoolean() ? deltaInt : -deltaInt)));
             } else if (jsonNode.isFloatingPointNumber()) {
-                arrayNode.set(index, new FloatNode(jsonNode.longValue() + (random.nextBoolean() ? random.nextFloat() : -random.nextFloat())));
+                arrayNode.set(index, new DoubleNode(jsonNode.doubleValue() + (random.nextBoolean() ? random.nextFloat() : -random.nextFloat())));
             } else if (jsonNode.isTextual()) {
                 arrayNode.set(index, new TextNode(mutateString(jsonNode.asText())));
             } else if (jsonNode.isBoolean()) {

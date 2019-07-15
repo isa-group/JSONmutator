@@ -32,5 +32,8 @@
     "405" : {
       "description" : "Validation exception"
     }
-  }
+  },
+  "float1": 123.123,
+  "float2": 3345723.09,
+  "float3": 3742589723452.239472
 }

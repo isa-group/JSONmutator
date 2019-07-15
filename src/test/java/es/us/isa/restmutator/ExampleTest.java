@@ -34,7 +34,7 @@ public class ExampleTest {
             System.out.println("Original JSON object:\n.\n.\n.\n");
             System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
             JsonNode mutatedJsonNode = mutator.mutateJSON(jsonNode);
-            System.out.println("Mutated JSON object:\n.\n.\n.\n");
+            System.out.println(".\n.\n.\nMutated JSON object:\n.\n.\n.\n");
             System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode.toString(), Object.class)));
         } catch (IOException e) {
 //            e.printStackTrace();
