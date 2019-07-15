@@ -8,15 +8,102 @@ import java.util.*;
 
 public class Mutator {
 
-    private static final float addPropertyProb = 0.2f;
-    private static final float removePropertyProb = 0.2f;
-    private static final float mutateValueProb = 0.2f;
-    private static final int minInt = -1000000;
-    private static final int maxInt = 1000000;
-    private static final int maxStringLength = 10;
-    private static final int deltaInt = 1;
+    private float addPropertyProb;
+    private float removePropertyProb;
+    private float mutateValueProb;
+    private float makeNullProb;
+    private float leaveEmptyProb;
+    private int minInt;
+    private int maxInt;
+    private int maxStringLength;
+    private int deltaInt;
 
-    public static JsonNode mutateJSON(JsonNode jsonNode) {
+    public Mutator() {
+        addPropertyProb = 0.1f;
+        removePropertyProb = 0.1f;
+        mutateValueProb = 0.1f;
+        makeNullProb = 0.1f;
+        leaveEmptyProb = 0.1f;
+        minInt = -1000000;
+        maxInt = 1000000;
+        maxStringLength = 10;
+        deltaInt = 1;
+    }
+
+    public float getAddPropertyProb() {
+        return addPropertyProb;
+    }
+
+    public void setAddPropertyProb(float addPropertyProb) {
+        this.addPropertyProb = addPropertyProb;
+    }
+
+    public float getRemovePropertyProb() {
+        return removePropertyProb;
+    }
+
+    public void setRemovePropertyProb(float removePropertyProb) {
+        this.removePropertyProb = removePropertyProb;
+    }
+
+    public float getMutateValueProb() {
+        return mutateValueProb;
+    }
+
+    public void setMutateValueProb(float mutateValueProb) {
+        this.mutateValueProb = mutateValueProb;
+    }
+
+    public float getMakeNullProb() {
+        return makeNullProb;
+    }
+
+    public void setMakeNullProb(float makeNullProb) {
+        this.makeNullProb = makeNullProb;
+    }
+
+    public float getLeaveEmptyProb() {
+        return leaveEmptyProb;
+    }
+
+    public void setLeaveEmptyProb(float leaveEmptyProb) {
+        this.leaveEmptyProb = leaveEmptyProb;
+    }
+
+    public int getMinInt() {
+        return minInt;
+    }
+
+    public void setMinInt(int minInt) {
+        this.minInt = minInt;
+    }
+
+    public int getMaxInt() {
+        return maxInt;
+    }
+
+    public void setMaxInt(int maxInt) {
+        this.maxInt = maxInt;
+    }
+
+    public int getMaxStringLength() {
+        return maxStringLength;
+    }
+
+    public void setMaxStringLength(int maxStringLength) {
+        this.maxStringLength = maxStringLength;
+    }
+
+    public int getDeltaInt() {
+        return deltaInt;
+    }
+
+    public void setDeltaInt(int deltaInt) {
+        this.deltaInt = deltaInt;
+    }
+
+    public JsonNode mutateJSON(JsonNode jsonNode) {
+        Random random = new Random();
 
         if (jsonNode.isObject()) {
             // First, add and/or remove a property to the JSON with a certain probability
@@ -28,7 +115,16 @@ public class Mutator {
             Map.Entry<String,JsonNode> jsonProperty;
             while (objectPropertiesIterator.hasNext()) {
                 jsonProperty = objectPropertiesIterator.next();
-                if (jsonProperty.getValue().isObject() || jsonProperty.getValue().isArray()) {
+                if (random.nextFloat() <= makeNullProb) {
+                    ((ObjectNode)jsonNode).putNull(jsonProperty.getKey());
+                } else if (random.nextFloat() <= leaveEmptyProb) {
+                    if (jsonProperty.getValue().isObject()) {
+                        ((ObjectNode)jsonNode).putObject(jsonProperty.getKey());
+                    } else if (jsonProperty.getValue().isArray()) {
+                        ((ObjectNode)jsonNode).putArray(jsonProperty.getKey());
+                    }
+                }
+                else if (jsonProperty.getValue().isObject() || jsonProperty.getValue().isArray()) {
                     // If the property is an object or array, recursively call this function
                     jsonProperty.setValue(mutateJSON(jsonProperty.getValue()));
                 } else {
@@ -48,7 +144,16 @@ public class Mutator {
             while (arrayElements.hasNext()) {
                 arrayElement = arrayElements.next();
                 arrayIndex++;
-                if (arrayElement.isObject() || arrayElement.isArray()) {
+                if (random.nextFloat() <= makeNullProb) {
+                    ((ArrayNode)jsonNode).set(arrayIndex, NullNode.getInstance());
+                } else if (random.nextFloat() <= leaveEmptyProb) {
+                    if (arrayElement.isObject()) {
+                        ((ArrayNode)jsonNode).set(arrayIndex, new ObjectNode(JsonNodeFactory.instance));
+                    } else if (arrayElement.isArray()) {
+                        ((ArrayNode)jsonNode).set(arrayIndex, new ArrayNode(JsonNodeFactory.instance));
+                    }
+                }
+                else if (arrayElement.isObject() || arrayElement.isArray()) {
                     // If the property is an object or array, recursively call this function
                     mutateJSON(arrayElement);
                 } else {
@@ -61,7 +166,7 @@ public class Mutator {
         return jsonNode;
     }
 
-    private static ObjectNode addProperty(ObjectNode objectNode) {
+    private ObjectNode addProperty(ObjectNode objectNode) {
         Random random = new Random();
         if (random.nextFloat() <= addPropertyProb) {
             float randomValue = random.nextFloat();
@@ -85,7 +190,7 @@ public class Mutator {
         return objectNode;
     }
 
-    private static ArrayNode addProperty(ArrayNode arrayNode) {
+    private ArrayNode addProperty(ArrayNode arrayNode) {
         Random random = new Random();
         if (random.nextFloat() <= addPropertyProb) {
             float randomValue = random.nextFloat();
@@ -109,26 +214,28 @@ public class Mutator {
         return arrayNode;
     }
 
-    private static ObjectNode removeProperty(ObjectNode objectNode) {
+    private ObjectNode removeProperty(ObjectNode objectNode) {
         Random random = new Random();
         if (random.nextFloat() <= removePropertyProb) {
             List<String> propertyNames = Lists.newArrayList(objectNode.fieldNames());
-            objectNode.remove(propertyNames.get(random.nextInt(propertyNames.size()))); // Remove a random property
+            if (propertyNames.size() > 0)
+                objectNode.remove(propertyNames.get(random.nextInt(propertyNames.size()))); // Remove a random property
         }
 
         return objectNode;
     }
 
-    private static ArrayNode removeProperty(ArrayNode arrayNode) {
+    private ArrayNode removeProperty(ArrayNode arrayNode) {
         Random random = new Random();
         if (random.nextFloat() <= removePropertyProb) {
-            arrayNode.remove(random.nextInt(arrayNode.size())); // Remove a random property
+            if (arrayNode.size() > 0)
+                arrayNode.remove(random.nextInt(arrayNode.size())); // Remove a random property
         }
 
         return arrayNode;
     }
 
-    private static ObjectNode mutateProperty(ObjectNode objectNode, Map.Entry<String,JsonNode> jsonProperty) {
+    private ObjectNode mutateProperty(ObjectNode objectNode, Map.Entry<String,JsonNode> jsonProperty) {
         Random random = new Random();
         if (random.nextFloat() <= mutateValueProb) {
             if (jsonProperty.getValue().isIntegralNumber()) {
@@ -145,7 +252,7 @@ public class Mutator {
         return objectNode;
     }
 
-    private static ArrayNode mutateProperty(ArrayNode arrayNode, JsonNode jsonNode, int index) {
+    private ArrayNode mutateProperty(ArrayNode arrayNode, JsonNode jsonNode, int index) {
         Random random = new Random();
         if (random.nextFloat() <= mutateValueProb) {
             if (jsonNode.isIntegralNumber()) {
@@ -162,7 +269,7 @@ public class Mutator {
         return arrayNode;
     }
 
-    private static String mutateString(String string) {
+    private String mutateString(String string) {
         Random random = new Random();
         int charPosition = random.nextInt(string.length());
         StringBuilder sb = new StringBuilder(string);
