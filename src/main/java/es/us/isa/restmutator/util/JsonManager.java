@@ -1,5 +1,6 @@
 package es.us.isa.restmutator.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 
 /**
@@ -12,6 +13,7 @@ public class JsonManager {
 
     /**
      * Insert (or replace) element in a JSON object
+     *
      * @param objectNode The object where to insert the property
      * @param propertyName The name of the property to insert
      * @param element The value of the inserted property
@@ -25,6 +27,10 @@ public class JsonManager {
             objectNode.put(propertyName, (Double)element);
         } else if (element instanceof Boolean) {
             objectNode.put(propertyName, (Boolean)element);
+        } else if (element instanceof ObjectNode) {
+            objectNode.replace(propertyName, (ObjectNode)element);
+        } else if (element instanceof ArrayNode) {
+            objectNode.replace(propertyName, (ArrayNode)element);
         } else {
             throw new IllegalArgumentException("The element to insert must be a string, int, float or boolean.");
         }
@@ -32,6 +38,7 @@ public class JsonManager {
 
     /**
      * Insert (or replace) element in an array
+     *
      * @param arrayNode The array where to insert the element
      * @param index The index position in the array where to insert the element
      * @param element The value of the inserted element
@@ -45,6 +52,10 @@ public class JsonManager {
             arrayNode.set(index, new DoubleNode((Double)element));
         } else if (element instanceof Boolean) {
             arrayNode.set(index, (Boolean)element ? BooleanNode.TRUE : BooleanNode.FALSE);
+        } else if (element instanceof ObjectNode) {
+            arrayNode.set(index, (ObjectNode)element);
+        } else if (element instanceof ArrayNode) {
+            arrayNode.set(index, (ArrayNode)element);
         } else {
             throw new IllegalArgumentException("The element to insert must be a string, int, float or boolean.");
         }

@@ -14,11 +14,16 @@ import static es.us.isa.restmutator.util.PropertyManager.readProperty;
  */
 public class StringMutator extends AbstractMutator {
 
+    private final String replaceOperator = "replace";
+    private final String mutateOperator = "mutate";
+    private final String changeTypeOperator = "changeType";
+
     public StringMutator() {
         super();
         prob = Float.parseFloat(readProperty("operator.value.string.prob"));
-        operators.put("replace", new StringReplacementOperator());
-        operators.put("mutate", new StringMutationOperator());
+        operators.put(replaceOperator, new StringReplacementOperator());
+        operators.put(mutateOperator, new StringMutationOperator());
+        operators.put(changeTypeOperator, new StringChangeTypeOperator());
     }
 
     /**
@@ -61,10 +66,12 @@ public class StringMutator extends AbstractMutator {
     private Object getMutatedString(String string) {
         String operator = getOperator();
         switch (operator) {
-            case "replace":
-                return ((StringReplacementOperator)operators.get("replace")).mutate();
-            case "mutate":
-                return ((StringMutationOperator)operators.get("replace")).mutate(string);
+            case replaceOperator:
+                return ((StringReplacementOperator)operators.get(replaceOperator)).mutate();
+            case mutateOperator:
+                return ((StringMutationOperator)operators.get(mutateOperator)).mutate(string);
+            case changeTypeOperator:
+                return ((StringChangeTypeOperator)operators.get(changeTypeOperator)).mutate();
             default:
                 throw new IllegalArgumentException("The operator '" + operator + "' is not allowed.");
         }
