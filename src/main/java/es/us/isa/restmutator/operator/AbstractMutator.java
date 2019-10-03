@@ -16,6 +16,7 @@ public abstract class AbstractMutator extends RandomManager {
 
     public AbstractMutator() {
         super();
+        operators = new HashMap<>();
     }
 
     public boolean shouldApplyMutation() {
