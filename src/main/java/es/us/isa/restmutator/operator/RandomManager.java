@@ -1,6 +1,7 @@
 package es.us.isa.restmutator.operator;
 
-import java.util.Random;
+import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Class for randomness management. To be extended by mutators and operators.
@@ -10,15 +11,23 @@ import java.util.Random;
 public abstract class RandomManager {
 
     protected long seed=-1;
-    protected Random rand;
+    protected RandomDataGenerator rand1;
+    protected RandomGenerator rand2;
 
     public RandomManager() {
-        rand = new Random();
-        seed = rand.nextLong();
-        rand.setSeed(seed);
+        rand1 = new RandomDataGenerator();
+        seed = rand1.getRandomGenerator().nextLong();
+        rand1.reSeed(seed);
+        rand2 = rand1.getRandomGenerator();
     }
 
     public long getSeed() {
         return this.seed;
+    }
+
+    public void setSeed(long seed) {
+        this.seed = seed;
+        rand1.reSeed(seed);
+        rand2 = rand1.getRandomGenerator();
     }
 }

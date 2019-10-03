@@ -17,12 +17,12 @@ public class StringReplacementOperator extends AbstractOperator {
 
     public StringReplacementOperator() {
         super();
+        weight = Float.parseFloat(readProperty("operator.value.string.weight.replace"));
         minLength = Integer.parseInt(readProperty("operator.value.string.length.min"));
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
-        weight = Float.parseFloat(readProperty("operator.value.string.weight.replace"));
     }
 
     public String mutate() {
-        return RandomStringUtils.random(minLength+rand.nextInt(maxLength), true, true);
+        return RandomStringUtils.random(rand1.nextInt(minLength, maxLength), true, true);
     }
 }

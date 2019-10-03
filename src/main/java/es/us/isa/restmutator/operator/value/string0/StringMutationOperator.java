@@ -20,11 +20,12 @@ public class StringMutationOperator extends AbstractOperator {
 
     public String mutate(String string) {
         StringBuilder sb = new StringBuilder(string);
-        int charPosition = rand.nextInt(string.length());
+        int charPosition = rand1.nextInt(0, string.length()-1);
+        float randomValue = rand2.nextFloat();
 
-        if (rand.nextFloat() <= 1f/3) { // Remove char
+        if (randomValue <= 1f/3) { // Remove char
             sb.deleteCharAt(charPosition);
-        } else if (rand.nextFloat() <= 2f/3)  { // Add char
+        } else if (randomValue <= 2f/3)  { // Add char
             sb.insert(charPosition, RandomStringUtils.random(1, true, true));
         } else { // Replace char
             sb.deleteCharAt(charPosition);

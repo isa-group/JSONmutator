@@ -2,8 +2,6 @@ package es.us.isa.restmutator.operator;
 
 import java.util.*;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
-
 /**
  * Superclass for mutators. A mutator decides on the type of mutation to be applied
  * to an element (string, int, etc.) based on the different mutation operators
@@ -21,7 +19,7 @@ public abstract class AbstractMutator extends RandomManager {
     }
 
     public boolean shouldApplyMutation() {
-        return rand.nextFloat() <= prob;
+        return rand2.nextFloat() <= prob;
     }
 
     /**
@@ -33,11 +31,12 @@ public abstract class AbstractMutator extends RandomManager {
      * 3.- StringBoundary. {@code weight=0.2}. <br>
      * - {@code randomFloat=0.367} => StringMutation is selected, because the float
      * falls in the range 0.1-0.5 (0.1+0.4)
+     *
      * @return The name of the mutation operator selected
      */
     public String getOperator() {
         // Sum all weights and multiply the result by a random float between 0 and 1
-        float randomFloat = rand.nextFloat() *
+        float randomFloat = rand2.nextFloat() *
                 operators.values().stream()
                 .map(AbstractOperator::getWeight)
                 .reduce(0f, Float::sum);
