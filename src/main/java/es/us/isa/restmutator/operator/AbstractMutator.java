@@ -8,11 +8,13 @@ import static es.us.isa.restmutator.util.PropertyManager.readProperty;
  * Superclass for mutators. A mutator decides on the type of mutation to be applied
  * to an element (string, int, etc.) based on the different mutation operators
  * enabled for that element (boundary, replacement, etc.).
+ *
+ * @author Alberto Martin-Lopez
  */
 public abstract class AbstractMutator extends RandomManager {
 
-    protected HashMap<String, AbstractOperator> operators;
-    protected float prob;
+    protected HashMap<String, AbstractOperator> operators; // Map of mutation operators. The key should be equal to the one in the properties file
+    protected float prob; // Probability to apply this mutation to an element. Configured in properties file
 
     public AbstractMutator() {
         super();
@@ -44,11 +46,12 @@ public abstract class AbstractMutator extends RandomManager {
         String operatorName = null;
         Iterator<Map.Entry<String,AbstractOperator>> operatorIterator = operators.entrySet().iterator();
         Map.Entry<String,AbstractOperator> currentOperator;
-        while (operatorIterator.hasNext()) {
+        while (operatorIterator.hasNext()) { // Iterate over mutation operators
             currentOperator = operatorIterator.next();
-            acc += currentOperator.getValue().weight;
-            if (randomFloat <= acc) {
+            acc += currentOperator.getValue().getWeight();
+            if (randomFloat <= acc) { // When the condition is met, get operator name and break loop
                 operatorName = currentOperator.getKey();
+                break;
             }
         }
 

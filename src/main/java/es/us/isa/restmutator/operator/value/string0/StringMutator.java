@@ -1,9 +1,9 @@
 package es.us.isa.restmutator.operator.value.string0;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.restmutator.operator.AbstractMutator;
-import jdk.nashorn.internal.ir.ObjectNode;
-
+import static es.us.isa.restmutator.util.JsonManager.*;
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
 
 /**
@@ -21,20 +21,52 @@ public class StringMutator extends AbstractMutator {
         operators.put("mutate", new StringMutationOperator());
     }
 
-    public Object mutate(ObjectNode objectNode, String propertyName) {
+    /**
+     * Given an object and the name of a property, mutate the value of that property
+     * with probability {@link StringMutator#prob}
+     * @return True if the mutation was applied, false otherwise
+     */
+    public boolean mutate(ObjectNode objectNode, String propertyName) {
         if (shouldApplyMutation()) {
-            String mutatedString;
-//            switch (getOperator()) {
-//                case "replace":
-//                    mutatedString = operators.get("replace").mutate("")
-//            }
+            String propertyValue = objectNode.get(propertyName).asText(); // Get string to mutate
+            Object mutatedString = getMutatedString(propertyValue); // Mutate string
+            insertElement(objectNode, propertyName, mutatedString); // Replace original string with mutated string
+            return true;
         }
-
-        return null;
+        return false;
     }
 
-    public Object mutate(ArrayNode arrayNode, int index) {
+    /**
+     * Given an array and the index of an element, mutate that element
+     * with probability {@link StringMutator#prob}
+     * @return True if the mutation was applied, false otherwise
+     */
+    public boolean mutate(ArrayNode arrayNode, int index) {
+        if (shouldApplyMutation()) {
+            String arrayElement = arrayNode.get(index).asText(); // Get string to mutate
+            Object mutatedString = getMutatedString(arrayElement); // Mutate string
+            insertElement(arrayNode, index, mutatedString); // Replace original string with mutated string
+            return true;
+        }
+        return false;
+    }
 
-        return null;
+    /**
+     * Mutates a string with one of the predefined mutation operators configured
+     * in the properties file
+     * @param string The string to mutate
+     * @return The mutated object. ATTENTION: This can be a string or something
+     * else, because the mutation can change the type of the element (int, bool...)
+     */
+    private Object getMutatedString(String string) {
+        String operator = getOperator();
+        switch (operator) {
+            case "replace":
+                return ((StringReplacementOperator)operators.get("replace")).mutate();
+            case "mutate":
+                return ((StringMutationOperator)operators.get("replace")).mutate(string);
+            default:
+                throw new IllegalArgumentException("The operator '" + operator + "' is not allowed.");
+        }
     }
 }

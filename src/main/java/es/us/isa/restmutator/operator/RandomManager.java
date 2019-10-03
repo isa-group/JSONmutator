@@ -2,6 +2,11 @@ package es.us.isa.restmutator.operator;
 
 import java.util.Random;
 
+/**
+ * Class for randomness management. To be extended by mutators and operators.
+ *
+ * @author Alberto Martin-Lopez
+ */
 public abstract class RandomManager {
 
     protected long seed=-1;
