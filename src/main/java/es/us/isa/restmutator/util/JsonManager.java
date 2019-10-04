@@ -31,17 +31,21 @@ public class JsonManager {
             objectNode.replace(propertyName, (ObjectNode)element);
         } else if (element instanceof ArrayNode) {
             objectNode.replace(propertyName, (ArrayNode)element);
+        } else if (element == null) {
+            objectNode.putNull(propertyName);
         } else {
-            throw new IllegalArgumentException("The element to insert must be a string, int, float or boolean.");
+            throw new IllegalArgumentException("The element to insert must be a string, int, float, boolean, " +
+                    "object, array or null value.");
         }
     }
 
     /**
-     * Insert (or replace) element in an array
+     * Replace element in an array. NOTE: This does not insert a new element like
+     * {@link JsonManager#insertElement} can do, it always replaces an old one.
      *
-     * @param arrayNode The array where to insert the element
-     * @param index The index position in the array where to insert the element
-     * @param element The value of the inserted element
+     * @param arrayNode The array where to replace the element
+     * @param index The index position in the array where to replace the element
+     * @param element The value of the element after being replaced
      */
     public static void insertElement(ArrayNode arrayNode, int index, Object element) {
         if (element instanceof String) {
@@ -56,8 +60,11 @@ public class JsonManager {
             arrayNode.set(index, (ObjectNode)element);
         } else if (element instanceof ArrayNode) {
             arrayNode.set(index, (ArrayNode)element);
+        } else if (element == null) {
+            arrayNode.set(index, null);
         } else {
-            throw new IllegalArgumentException("The element to insert must be a string, int, float or boolean.");
+            throw new IllegalArgumentException("The element to insert must be a string, int, float, boolean, " +
+                    "object, array or null value.");
         }
     }
 }

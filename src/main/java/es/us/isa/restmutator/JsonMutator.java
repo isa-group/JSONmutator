@@ -3,6 +3,7 @@ package es.us.isa.restmutator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import es.us.isa.restmutator.mutator.value.boolean0.BooleanMutator;
 import es.us.isa.restmutator.mutator.value.string0.StringMutator;
 
 import java.util.Iterator;
@@ -20,7 +21,7 @@ public class JsonMutator {
     private StringMutator stringMutator;
 //    private LongMutator longMutator;
 //    private DoubleMutator doubleMutator;
-//    private BooleanMutator booleanMutator;
+    private BooleanMutator booleanMutator;
 //    private ObjectMutator objectMutator;
 //    private ArrayMutator arrayMutator;
 
@@ -31,8 +32,8 @@ public class JsonMutator {
 //            longMutator = new LongMutator();
 //        if (Boolean.parseBoolean(readProperty("operator.value.double.enabled")))
 //            doubleMutator = new DoubleMutator();
-//        if (Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")))
-//            booleanMutator = new BooleanMutator();
+        if (Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")))
+            booleanMutator = new BooleanMutator();
 //        if (Boolean.parseBoolean(readProperty("operator.object.enabled")))
 //            objectMutator = new ObjectMutator();
 //        if (Boolean.parseBoolean(readProperty("operator.array.enabled")))
@@ -90,7 +91,7 @@ public class JsonMutator {
         } else if (jsonProperty.getValue().isTextual()) {
             stringMutator.mutate(objectNode, jsonProperty.getKey());
         } else if (jsonProperty.getValue().isBoolean()) {
-
+            booleanMutator.mutate(objectNode, jsonProperty.getKey());
         }
     }
 
@@ -102,7 +103,7 @@ public class JsonMutator {
         } else if (arrayNode.get(index).isTextual()) {
             stringMutator.mutate(arrayNode, index);
         } else if (arrayNode.get(index).isBoolean()) {
-
+            booleanMutator.mutate(arrayNode, index);
         }
     }
 }

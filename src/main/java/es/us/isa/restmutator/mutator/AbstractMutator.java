@@ -1,6 +1,12 @@
 package es.us.isa.restmutator.mutator;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import es.us.isa.restmutator.mutator.value.boolean0.BooleanMutator;
+
 import java.util.*;
+
+import static es.us.isa.restmutator.util.JsonManager.insertElement;
 
 /**
  * Superclass for mutators. A mutator decides on the type of mutation to be applied
@@ -57,4 +63,73 @@ public abstract class AbstractMutator extends RandomManager {
 
         return operatorName;
     }
+
+    /**
+     * Given an object and the name of a property, mutate the value of that property
+     * with probability {@link AbstractMutator#prob}
+     *
+     * @return True if the mutation was applied, false otherwise
+     */
+    public boolean mutate(ObjectNode objectNode, String propertyName) {
+        if (shouldApplyMutation()) {
+            Object propertyValue;
+            if (objectNode.get(propertyName).isIntegralNumber()) {
+                propertyValue = objectNode.get(propertyName).asLong(); // Get number to mutate
+            } else if (objectNode.get(propertyName).isFloatingPointNumber()) {
+                propertyValue = objectNode.get(propertyName).asDouble(); // Get floating number to mutate
+            } else if (objectNode.get(propertyName).isTextual()) {
+                propertyValue = objectNode.get(propertyName).asText(); // Get string to mutate
+            } else if (objectNode.get(propertyName).isBoolean()) {
+                propertyValue = objectNode.get(propertyName).asBoolean(); // Get boolean to mutate
+            } else {
+                throw new IllegalArgumentException("The value of the property '" + propertyName +
+                        "' cannot be mutated. Allowed mutations: strings, ints, floats or booleans.");
+            }
+
+            Object mutatedElement = getMutatedElement(propertyValue); // Mutate element
+            insertElement(objectNode, propertyName, mutatedElement); // Replace original element with mutated element
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Given an array and the index of an element, mutate that element
+     * with probability {@link AbstractMutator#prob}
+     *
+     * @return True if the mutation was applied, false otherwise
+     */
+    public boolean mutate(ArrayNode arrayNode, int index) {
+        if (shouldApplyMutation()) {
+            Object arrayElement;
+            if (arrayNode.get(index).isIntegralNumber()) {
+                arrayElement = arrayNode.get(index).asLong(); // Get number to mutate
+            } else if (arrayNode.get(index).isFloatingPointNumber()) {
+                arrayElement = arrayNode.get(index).asDouble(); // Get floating number to mutate
+            } else if (arrayNode.get(index).isTextual()) {
+                arrayElement = arrayNode.get(index).asText(); // Get string to mutate
+            } else if (arrayNode.get(index).isBoolean()) {
+                arrayElement = arrayNode.get(index).asBoolean(); // Get boolean to mutate
+            } else {
+                throw new IllegalArgumentException("The element at index position " + index +
+                        " cannot be mutated. Allowed mutations: strings, ints, floats or booleans.");
+            }
+
+            Object mutatedElement = getMutatedElement(arrayElement); // Mutate element
+            insertElement(arrayNode, index, mutatedElement); // Replace original element with mutated element
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Mutates an element with one of the predefined mutation operators configured
+     * in the properties file
+     *
+     * @param element The element (boolean, int, string, etc.) to mutate
+     * @return The mutated object. ATTENTION: This can be of the same type as the
+     * original element, or of a different type, because the mutation can change
+     * the type of the element (int, string...)
+     */
+    protected abstract Object getMutatedElement(Object element);
 }
