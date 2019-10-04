@@ -31,22 +31,4 @@ public class StringMutator extends AbstractMutator {
         operators.put(nullOperator, new NullOperator(String.class));
         operators.put(changeTypeOperator, new ChangeTypeOperator(String.class));
     }
-
-    @Override
-    protected Object getMutatedElement(Object stringObject) {
-        String string = (String)stringObject;
-        String operator = getOperator();
-        switch (operator) {
-            case replaceOperator:
-                return ((StringReplacementOperator)operators.get(replaceOperator)).mutate();
-            case mutateOperator:
-                return ((StringMutationOperator)operators.get(mutateOperator)).mutate(string);
-            case nullOperator:
-                return ((NullOperator)operators.get(nullOperator)).mutate();
-            case changeTypeOperator:
-                return ((ChangeTypeOperator)operators.get(changeTypeOperator)).mutate();
-            default:
-                throw new IllegalArgumentException("The operator '" + operator + "' is not allowed.");
-        }
-    }
 }

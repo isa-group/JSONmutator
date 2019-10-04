@@ -86,7 +86,8 @@ public abstract class AbstractMutator extends RandomManager {
                         "' cannot be mutated. Allowed mutations: strings, ints, floats or booleans.");
             }
 
-            Object mutatedElement = getMutatedElement(propertyValue); // Mutate element
+            // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
+            Object mutatedElement = operators.get(getOperator()).mutate(propertyValue);
             insertElement(objectNode, propertyName, mutatedElement); // Replace original element with mutated element
             return true;
         }
@@ -115,21 +116,11 @@ public abstract class AbstractMutator extends RandomManager {
                         " cannot be mutated. Allowed mutations: strings, ints, floats or booleans.");
             }
 
-            Object mutatedElement = getMutatedElement(arrayElement); // Mutate element
+            // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
+            Object mutatedElement = operators.get(getOperator()).mutate(arrayElement);
             insertElement(arrayNode, index, mutatedElement); // Replace original element with mutated element
             return true;
         }
         return false;
     }
-
-    /**
-     * Mutates an element with one of the predefined mutation operators configured
-     * in the properties file
-     *
-     * @param element The element (boolean, int, string, etc.) to mutate
-     * @return The mutated object. ATTENTION: This can be of the same type as the
-     * original element, or of a different type, because the mutation can change
-     * the type of the element (int, string...)
-     */
-    protected abstract Object getMutatedElement(Object element);
 }

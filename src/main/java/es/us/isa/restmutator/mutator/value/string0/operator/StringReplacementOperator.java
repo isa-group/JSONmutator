@@ -22,7 +22,7 @@ public class StringReplacementOperator extends AbstractOperator {
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
     }
 
-    public String mutate() {
+    public Object mutate(Object stringObject) {
         return RandomStringUtils.random(rand1.nextInt(minLength, maxLength), true, true);
     }
 }

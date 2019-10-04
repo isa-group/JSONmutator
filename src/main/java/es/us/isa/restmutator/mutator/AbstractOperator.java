@@ -24,5 +24,5 @@ public abstract class AbstractOperator extends RandomManager {
         this.weight = weight;
     }
 
-//    public abstract <T> T mutate(T element);
+    public abstract Object mutate(Object element);
 }

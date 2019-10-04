@@ -18,7 +18,8 @@ public class StringMutationOperator extends AbstractOperator {
         weight = Float.parseFloat(readProperty("operator.value.string.weight.mutate"));
     }
 
-    public String mutate(String string) {
+    public Object mutate(Object stringObject) {
+        String string = (String)stringObject;
         StringBuilder sb = new StringBuilder(string);
         int charPosition = rand1.nextInt(0, string.length()-1);
         float randomValue = rand2.nextFloat();

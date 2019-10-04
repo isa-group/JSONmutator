@@ -36,7 +36,7 @@ public class ChangeTypeOperator extends AbstractOperator {
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
     }
 
-    public Object mutate() {
+    public Object mutate(Object elementObject) {
         float randomValue = rand2.nextFloat();
         Object returnObject = null;
 

@@ -16,7 +16,7 @@ public class NullOperator extends AbstractOperator {
         weight = assignWeight(classType.getSimpleName());
     }
 
-    public Object mutate() {
+    public Object mutate(Object elementObject) {
         return null;
     }
 }

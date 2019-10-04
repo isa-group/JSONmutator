@@ -16,7 +16,8 @@ public class BooleanMutationOperator extends AbstractOperator {
         weight = Float.parseFloat(readProperty("operator.value.boolean.weight.mutate"));
     }
 
-    public Boolean mutate(Boolean bool) {
+    public Object mutate(Object boolObject) {
+        Boolean bool = (Boolean)boolObject;
         return !bool;
     }
 }
