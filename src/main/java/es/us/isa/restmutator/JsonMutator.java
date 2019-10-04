@@ -3,7 +3,7 @@ package es.us.isa.restmutator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.us.isa.restmutator.operator.value.string0.StringMutator;
+import es.us.isa.restmutator.mutator.value.string0.StringMutator;
 
 import java.util.Iterator;
 import java.util.Map;

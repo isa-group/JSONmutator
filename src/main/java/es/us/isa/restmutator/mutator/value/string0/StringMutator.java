@@ -1,8 +1,12 @@
-package es.us.isa.restmutator.operator.value.string0;
+package es.us.isa.restmutator.mutator.value.string0;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.us.isa.restmutator.operator.AbstractMutator;
+import es.us.isa.restmutator.mutator.AbstractMutator;
+import es.us.isa.restmutator.mutator.value.string0.operator.StringChangeTypeOperator;
+import es.us.isa.restmutator.mutator.value.string0.operator.StringMutationOperator;
+import es.us.isa.restmutator.mutator.value.string0.operator.StringReplacementOperator;
+
 import static es.us.isa.restmutator.util.JsonManager.*;
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
 

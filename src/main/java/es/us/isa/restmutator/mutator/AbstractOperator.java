@@ -1,4 +1,4 @@
-package es.us.isa.restmutator.operator;
+package es.us.isa.restmutator.mutator;
 
 /**
  * Superclass for mutation operators. The attribute {@link AbstractOperator#weight}

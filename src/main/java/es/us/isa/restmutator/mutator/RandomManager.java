@@ -1,4 +1,4 @@
-package es.us.isa.restmutator.operator;
+package es.us.isa.restmutator.mutator;
 
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;

@@ -1,6 +1,6 @@
-package es.us.isa.restmutator.operator.value.string0;
+package es.us.isa.restmutator.mutator.value.string0.operator;
 
-import es.us.isa.restmutator.operator.AbstractOperator;
+import es.us.isa.restmutator.mutator.AbstractOperator;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;

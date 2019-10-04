@@ -1,4 +1,4 @@
-package es.us.isa.restmutator.operator;
+package es.us.isa.restmutator.mutator;
 
 import java.util.*;
 
