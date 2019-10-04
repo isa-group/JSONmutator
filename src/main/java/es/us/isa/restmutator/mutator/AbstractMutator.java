@@ -2,7 +2,6 @@ package es.us.isa.restmutator.mutator;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.us.isa.restmutator.mutator.value.boolean0.BooleanMutator;
 
 import java.util.*;
 

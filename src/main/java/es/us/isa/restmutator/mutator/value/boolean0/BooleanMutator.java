@@ -1,12 +1,9 @@
 package es.us.isa.restmutator.mutator.value.boolean0;
 
 import es.us.isa.restmutator.mutator.AbstractMutator;
-import es.us.isa.restmutator.mutator.AbstractOperator;
 import es.us.isa.restmutator.mutator.value.boolean0.operator.BooleanMutationOperator;
 import es.us.isa.restmutator.mutator.value.common.operator.ChangeTypeOperator;
 import es.us.isa.restmutator.mutator.value.common.operator.NullOperator;
-
-import static es.us.isa.restmutator.util.JsonManager.insertElement;
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
 
 /**
