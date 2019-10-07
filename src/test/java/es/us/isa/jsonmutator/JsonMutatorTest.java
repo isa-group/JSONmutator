@@ -1,4 +1,4 @@
-package es.us.isa.restmutator;
+package es.us.isa.jsonmutator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class ExampleTest {
+public class JsonMutatorTest {
 
     @Test
     public void test() {
-        System.out.println(System.getProperty("user.dir"));
+//        System.out.println(System.getProperty("user.dir"));
 
         // Read JSON file
         String jsonPath = "src/test/resources/test-object.json";
@@ -24,7 +24,7 @@ public class ExampleTest {
         }
 
         // Create mutator object (optionally change default configuration with the setters)
-        Mutator mutator = new Mutator();
+        JsonMutator mutator = new JsonMutator();
 //        mutator.setMutateValueProb(0.5f);
 
         // Create JsonNode and mutate it

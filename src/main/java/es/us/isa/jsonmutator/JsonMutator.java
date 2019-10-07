@@ -1,15 +1,15 @@
-package es.us.isa.restmutator;
+package es.us.isa.jsonmutator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.us.isa.restmutator.mutator.value.boolean0.BooleanMutator;
-import es.us.isa.restmutator.mutator.value.string0.StringMutator;
+import es.us.isa.jsonmutator.mutator.value.boolean0.BooleanMutator;
+import es.us.isa.jsonmutator.mutator.value.string0.StringMutator;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
+import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
  * Class to manage mutation of JSON objects. Also works with JSON arrays.

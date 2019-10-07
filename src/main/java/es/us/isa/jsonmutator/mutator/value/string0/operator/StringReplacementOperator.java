@@ -1,10 +1,10 @@
-package es.us.isa.restmutator.mutator.value.string0.operator;
+package es.us.isa.jsonmutator.mutator.value.string0.operator;
 
-import es.us.isa.restmutator.mutator.AbstractOperator;
-import es.us.isa.restmutator.util.OperatorNames;
+import es.us.isa.jsonmutator.mutator.AbstractOperator;
+import es.us.isa.jsonmutator.util.OperatorNames;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
+import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
  * Operator that mutates a string by completely replacing it.

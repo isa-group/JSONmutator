@@ -1,4 +1,4 @@
-package es.us.isa.restmutator;
+package es.us.isa.jsonmutator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;

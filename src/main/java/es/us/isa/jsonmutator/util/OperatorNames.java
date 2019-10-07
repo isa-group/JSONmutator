@@ -1,4 +1,4 @@
-package es.us.isa.restmutator.util;
+package es.us.isa.jsonmutator.util;
 
 /**
  * Name of all the possible mutation operators to apply to the JSON elements.

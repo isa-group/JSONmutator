@@ -1,11 +1,11 @@
-package es.us.isa.restmutator.mutator;
+package es.us.isa.jsonmutator.mutator;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 
-import static es.us.isa.restmutator.util.JsonManager.insertElement;
+import static es.us.isa.jsonmutator.util.JsonManager.insertElement;
 
 /**
  * Superclass for mutators. A mutator decides on the type of mutation to be applied

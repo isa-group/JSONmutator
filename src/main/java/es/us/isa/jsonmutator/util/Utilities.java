@@ -1,6 +1,6 @@
-package es.us.isa.restmutator.util;
+package es.us.isa.jsonmutator.util;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
+import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 public class Utilities {
 

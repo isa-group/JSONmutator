@@ -1,14 +1,14 @@
-package es.us.isa.restmutator.mutator.value.common.operator;
+package es.us.isa.jsonmutator.mutator.value.common.operator;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.us.isa.restmutator.mutator.AbstractOperator;
-import es.us.isa.restmutator.util.OperatorNames;
+import es.us.isa.jsonmutator.mutator.AbstractOperator;
+import es.us.isa.jsonmutator.util.OperatorNames;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
-import static es.us.isa.restmutator.util.Utilities.assignWeight;
+import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
+import static es.us.isa.jsonmutator.util.Utilities.assignWeight;
 
 /**
  * Operator that mutates an element by changing its type (int, string...)

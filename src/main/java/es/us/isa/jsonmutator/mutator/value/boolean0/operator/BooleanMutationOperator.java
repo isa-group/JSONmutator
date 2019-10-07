@@ -1,9 +1,9 @@
-package es.us.isa.restmutator.mutator.value.boolean0.operator;
+package es.us.isa.jsonmutator.mutator.value.boolean0.operator;
 
-import es.us.isa.restmutator.mutator.AbstractOperator;
-import es.us.isa.restmutator.util.OperatorNames;
+import es.us.isa.jsonmutator.mutator.AbstractOperator;
+import es.us.isa.jsonmutator.util.OperatorNames;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
+import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
  * Operator that mutates a boolean by inverting its value

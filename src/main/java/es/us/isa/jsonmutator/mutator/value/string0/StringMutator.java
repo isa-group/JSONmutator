@@ -1,13 +1,13 @@
-package es.us.isa.restmutator.mutator.value.string0;
+package es.us.isa.jsonmutator.mutator.value.string0;
 
-import es.us.isa.restmutator.mutator.AbstractMutator;
-import es.us.isa.restmutator.mutator.value.common.operator.ChangeTypeOperator;
-import es.us.isa.restmutator.mutator.value.common.operator.NullOperator;
-import es.us.isa.restmutator.mutator.value.string0.operator.StringMutationOperator;
-import es.us.isa.restmutator.mutator.value.string0.operator.StringReplacementOperator;
-import es.us.isa.restmutator.util.OperatorNames;
+import es.us.isa.jsonmutator.mutator.AbstractMutator;
+import es.us.isa.jsonmutator.mutator.value.common.operator.ChangeTypeOperator;
+import es.us.isa.jsonmutator.mutator.value.common.operator.NullOperator;
+import es.us.isa.jsonmutator.mutator.value.string0.operator.StringMutationOperator;
+import es.us.isa.jsonmutator.mutator.value.string0.operator.StringReplacementOperator;
+import es.us.isa.jsonmutator.util.OperatorNames;
 
-import static es.us.isa.restmutator.util.PropertyManager.readProperty;
+import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
  * Given a set of string mutation operators, the StringMutator selects one based

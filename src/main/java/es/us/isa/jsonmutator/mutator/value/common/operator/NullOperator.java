@@ -1,9 +1,9 @@
-package es.us.isa.restmutator.mutator.value.common.operator;
+package es.us.isa.jsonmutator.mutator.value.common.operator;
 
-import es.us.isa.restmutator.mutator.AbstractOperator;
-import es.us.isa.restmutator.util.OperatorNames;
+import es.us.isa.jsonmutator.mutator.AbstractOperator;
+import es.us.isa.jsonmutator.util.OperatorNames;
 
-import static es.us.isa.restmutator.util.Utilities.assignWeight;
+import static es.us.isa.jsonmutator.util.Utilities.assignWeight;
 
 /**
  * Operator that mutates an element by returning null

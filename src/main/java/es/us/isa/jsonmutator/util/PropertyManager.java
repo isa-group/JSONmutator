@@ -1,4 +1,4 @@
-package es.us.isa.restmutator.util;
+package es.us.isa.jsonmutator.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
