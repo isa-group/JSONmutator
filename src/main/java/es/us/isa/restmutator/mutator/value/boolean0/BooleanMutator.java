@@ -4,6 +4,8 @@ import es.us.isa.restmutator.mutator.AbstractMutator;
 import es.us.isa.restmutator.mutator.value.boolean0.operator.BooleanMutationOperator;
 import es.us.isa.restmutator.mutator.value.common.operator.ChangeTypeOperator;
 import es.us.isa.restmutator.mutator.value.common.operator.NullOperator;
+import es.us.isa.restmutator.util.OperatorNames;
+
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
 
 /**
@@ -14,15 +16,11 @@ import static es.us.isa.restmutator.util.PropertyManager.readProperty;
  */
 public class BooleanMutator extends AbstractMutator {
 
-    private final String mutateOperator = "mutate";
-    private final String nullOperator = "null";
-    private final String changeTypeOperator = "changeType";
-
     public BooleanMutator() {
         super();
         prob = Float.parseFloat(readProperty("operator.value.boolean.prob"));
-        operators.put(mutateOperator, new BooleanMutationOperator());
-        operators.put(nullOperator, new NullOperator(Boolean.class));
-        operators.put(changeTypeOperator, new ChangeTypeOperator(Boolean.class));
+        operators.put(OperatorNames.MUTATE, new BooleanMutationOperator());
+        operators.put(OperatorNames.NULL, new NullOperator(Boolean.class));
+        operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(Boolean.class));
     }
 }

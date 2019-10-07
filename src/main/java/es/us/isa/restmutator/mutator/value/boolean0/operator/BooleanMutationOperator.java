@@ -1,6 +1,7 @@
 package es.us.isa.restmutator.mutator.value.boolean0.operator;
 
 import es.us.isa.restmutator.mutator.AbstractOperator;
+import es.us.isa.restmutator.util.OperatorNames;
 
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
 
@@ -13,7 +14,7 @@ public class BooleanMutationOperator extends AbstractOperator {
 
     public BooleanMutationOperator() {
         super();
-        weight = Float.parseFloat(readProperty("operator.value.boolean.weight.mutate"));
+        weight = Float.parseFloat(readProperty("operator.value.boolean.weight." + OperatorNames.MUTATE));
     }
 
     public Object mutate(Object boolObject) {

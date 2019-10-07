@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.restmutator.mutator.AbstractOperator;
+import es.us.isa.restmutator.util.OperatorNames;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
@@ -27,7 +28,7 @@ public class ChangeTypeOperator extends AbstractOperator {
     public ChangeTypeOperator(Class classType) {
         super();
         type = classType.getSimpleName();
-        weight = assignWeight(type);
+        weight = assignWeight(type, OperatorNames.CHANGE_TYPE);
         minLong = Long.parseLong(readProperty("operator.value.long.min"));
         maxLong = Long.parseLong(readProperty("operator.value.long.max"));
         minDouble = Double.parseDouble(readProperty("operator.value.double.min"));

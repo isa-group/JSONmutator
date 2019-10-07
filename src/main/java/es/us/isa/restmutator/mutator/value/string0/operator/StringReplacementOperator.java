@@ -1,6 +1,7 @@
 package es.us.isa.restmutator.mutator.value.string0.operator;
 
 import es.us.isa.restmutator.mutator.AbstractOperator;
+import es.us.isa.restmutator.util.OperatorNames;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
@@ -17,7 +18,7 @@ public class StringReplacementOperator extends AbstractOperator {
 
     public StringReplacementOperator() {
         super();
-        weight = Float.parseFloat(readProperty("operator.value.string.weight.replace"));
+        weight = Float.parseFloat(readProperty("operator.value.string.weight." + OperatorNames.REPLACE));
         minLength = Integer.parseInt(readProperty("operator.value.string.length.min"));
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
     }

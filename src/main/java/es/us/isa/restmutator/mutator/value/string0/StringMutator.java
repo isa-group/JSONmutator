@@ -5,6 +5,8 @@ import es.us.isa.restmutator.mutator.value.common.operator.ChangeTypeOperator;
 import es.us.isa.restmutator.mutator.value.common.operator.NullOperator;
 import es.us.isa.restmutator.mutator.value.string0.operator.StringMutationOperator;
 import es.us.isa.restmutator.mutator.value.string0.operator.StringReplacementOperator;
+import es.us.isa.restmutator.util.OperatorNames;
+
 import static es.us.isa.restmutator.util.PropertyManager.readProperty;
 
 /**
@@ -15,17 +17,12 @@ import static es.us.isa.restmutator.util.PropertyManager.readProperty;
  */
 public class StringMutator extends AbstractMutator {
 
-    private final String replaceOperator = "replace";
-    private final String mutateOperator = "mutate";
-    private final String nullOperator = "null";
-    private final String changeTypeOperator = "changeType";
-
     public StringMutator() {
         super();
         prob = Float.parseFloat(readProperty("operator.value.string.prob"));
-        operators.put(replaceOperator, new StringReplacementOperator());
-        operators.put(mutateOperator, new StringMutationOperator());
-        operators.put(nullOperator, new NullOperator(String.class));
-        operators.put(changeTypeOperator, new ChangeTypeOperator(String.class));
+        operators.put(OperatorNames.REPLACE, new StringReplacementOperator());
+        operators.put(OperatorNames.MUTATE, new StringMutationOperator());
+        operators.put(OperatorNames.NULL, new NullOperator(String.class));
+        operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(String.class));
     }
 }
