@@ -10,6 +10,8 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
  * Operator that mutates a string by replacing it with a boundary value, namely
  * an empty string, an uppercase string, a lowercase string, a string of minimum
  * length or a string of maximum length.
+ *
+ * @author Alberto Martin-Lopez
  */
 public class StringBoundaryOperator extends AbstractOperator {
 

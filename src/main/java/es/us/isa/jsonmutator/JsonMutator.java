@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.jsonmutator.mutator.value.boolean0.BooleanMutator;
+import es.us.isa.jsonmutator.mutator.value.long0.LongMutator;
 import es.us.isa.jsonmutator.mutator.value.string0.StringMutator;
 
 import java.util.Iterator;
@@ -19,7 +20,7 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 public class JsonMutator {
 
     private StringMutator stringMutator;
-//    private LongMutator longMutator;
+    private LongMutator longMutator;
 //    private DoubleMutator doubleMutator;
     private BooleanMutator booleanMutator;
 //    private ObjectMutator objectMutator;
@@ -28,8 +29,8 @@ public class JsonMutator {
     public JsonMutator() {
         if (Boolean.parseBoolean(readProperty("operator.value.string.enabled")))
             stringMutator = new StringMutator();
-//        if (Boolean.parseBoolean(readProperty("operator.value.long.enabled")))
-//            longMutator = new LongMutator();
+        if (Boolean.parseBoolean(readProperty("operator.value.long.enabled")))
+            longMutator = new LongMutator();
 //        if (Boolean.parseBoolean(readProperty("operator.value.double.enabled")))
 //            doubleMutator = new DoubleMutator();
         if (Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")))
@@ -83,26 +84,26 @@ public class JsonMutator {
         return jsonNode;
     }
 
-    public void mutateProperty(ObjectNode objectNode, Map.Entry<String,JsonNode> jsonProperty) {
-        if (jsonProperty.getValue().isIntegralNumber()) {
-
-        } else if (jsonProperty.getValue().isFloatingPointNumber()) {
-
-        } else if (jsonProperty.getValue().isTextual()) {
+    private void mutateProperty(ObjectNode objectNode, Map.Entry<String, JsonNode> jsonProperty) {
+        if (longMutator!=null && jsonProperty.getValue().isIntegralNumber()) {
+            longMutator.mutate(objectNode, jsonProperty.getKey());
+//        } else if (doubleMutator!=null && jsonProperty.getValue().isFloatingPointNumber()) {
+//            doubleMutator.mutate(objectNode, jsonProperty.getKey());
+        } else if (stringMutator!=null && jsonProperty.getValue().isTextual()) {
             stringMutator.mutate(objectNode, jsonProperty.getKey());
-        } else if (jsonProperty.getValue().isBoolean()) {
+        } else if (booleanMutator!=null && jsonProperty.getValue().isBoolean()) {
             booleanMutator.mutate(objectNode, jsonProperty.getKey());
         }
     }
 
-    public void mutateProperty(ArrayNode arrayNode, int index) {
-        if (arrayNode.get(index).isIntegralNumber()) {
-
-        } else if (arrayNode.get(index).isFloatingPointNumber()) {
-
-        } else if (arrayNode.get(index).isTextual()) {
+    private void mutateProperty(ArrayNode arrayNode, int index) {
+        if (longMutator!=null && arrayNode.get(index).isIntegralNumber()) {
+            longMutator.mutate(arrayNode, index);
+//        } else if (doubleMutator!=null && arrayNode.get(index).isFloatingPointNumber()) {
+//            doubleMutator.mutate(objectNode, jsonProperty.getKey());
+        } else if (stringMutator!=null && arrayNode.get(index).isTextual()) {
             stringMutator.mutate(arrayNode, index);
-        } else if (arrayNode.get(index).isBoolean()) {
+        } else if (booleanMutator!=null && arrayNode.get(index).isBoolean()) {
             booleanMutator.mutate(arrayNode, index);
         }
     }
