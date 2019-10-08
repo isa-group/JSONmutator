@@ -36,13 +36,13 @@ public class ObjectAddPropertyOperator extends AbstractOperator {
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
     }
 
-    @Override
     public Object mutate(Object objectNodeObject) {
         ObjectNode objectNode = (ObjectNode)objectNodeObject;
-        float randomValue = rand2.nextFloat();
+        float randomValue;
         int addedProperties = rand1.nextInt(minAddedProperties, maxAddedProperties); // Add between min and max properties to object
 
         for (int i=1; i<=addedProperties; i++) {
+            randomValue = rand2.nextFloat();
             if (randomValue <= 1f/7) {
                 objectNode.put("randomLong"+i, rand1.nextLong(minLong, maxLong));
             } else if (randomValue <= 2f/7) {

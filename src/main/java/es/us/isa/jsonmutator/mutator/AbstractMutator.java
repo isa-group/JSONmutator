@@ -80,9 +80,12 @@ public abstract class AbstractMutator extends RandomManager {
                 propertyValue = objectNode.get(propertyName).asText(); // Get string to mutate
             } else if (objectNode.get(propertyName).isBoolean()) {
                 propertyValue = objectNode.get(propertyName).asBoolean(); // Get boolean to mutate
+            } else if (objectNode.get(propertyName).isObject() || objectNode.get(propertyName).isArray()) {
+                propertyValue = objectNode.get(propertyName); // Get object or array to mutate
             } else {
                 throw new IllegalArgumentException("The value of the property '" + propertyName +
-                        "' cannot be mutated. Allowed mutations: strings, ints, floats or booleans.");
+                        "' cannot be mutated. Allowed mutations: strings, ints, floats, booleans, " +
+                        "objects or arrays.");
             }
 
             // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
@@ -110,9 +113,12 @@ public abstract class AbstractMutator extends RandomManager {
                 arrayElement = arrayNode.get(index).asText(); // Get string to mutate
             } else if (arrayNode.get(index).isBoolean()) {
                 arrayElement = arrayNode.get(index).asBoolean(); // Get boolean to mutate
+            } else if (arrayNode.get(index).isObject() || arrayNode.get(index).isArray()) {
+                arrayElement = arrayNode.get(index); // Get object or array to mutate
             } else {
                 throw new IllegalArgumentException("The element at index position " + index +
-                        " cannot be mutated. Allowed mutations: strings, ints, floats or booleans.");
+                        " cannot be mutated. Allowed mutations: strings, ints, floats, booleans, " +
+                        "objects or arrays.");
             }
 
             // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
