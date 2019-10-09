@@ -38,20 +38,20 @@ public abstract class AbstractMutator extends RandomManager {
      * - {@code randomFloat=0.367} => StringMutation is selected, because the float
      * falls in the range 0.1-0.5 (0.1+0.4)
      *
-     * @return The name of the mutation operator selected
+     * @return The name of the mutation operator selected, or null if the map doesn't
+     * contain any operator
      */
     public String getOperator() {
-        // Sum all weights and multiply the result by a random float between 0 and 1
-        float randomFloat = rand2.nextFloat() *
-                operators.values().stream()
+        float sumWeights = operators.values().stream() // Sum all weights
                 .map(AbstractOperator::getWeight)
                 .reduce(0f, Float::sum);
+        float randomFloat = rand2.nextFloat() * sumWeights; // Generate random float between 0 and sumWeights
 
         float acc = 0;
         String operatorName = null;
         Iterator<Map.Entry<String,AbstractOperator>> operatorIterator = operators.entrySet().iterator();
         Map.Entry<String,AbstractOperator> currentOperator;
-        while (operatorIterator.hasNext()) { // Iterate over mutation operators
+        while (operatorIterator.hasNext() && sumWeights != 0) { // Iterate over mutation operators if sum of weights is greater than 0
             currentOperator = operatorIterator.next();
             acc += currentOperator.getValue().getWeight();
             if (randomFloat <= acc) { // When the condition is met, get operator name and break loop
@@ -89,9 +89,12 @@ public abstract class AbstractMutator extends RandomManager {
             }
 
             // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
-            Object mutatedElement = operators.get(getOperator()).mutate(propertyValue);
-            insertElement(objectNode, propertyName, mutatedElement); // Replace original element with mutated element
-            return true;
+            String operator = getOperator();
+            if (operator != null) {
+                Object mutatedElement = operators.get(operator).mutate(propertyValue);
+                insertElement(objectNode, propertyName, mutatedElement); // Replace original element with mutated element
+                return true;
+            }
         }
         return false;
     }
@@ -122,9 +125,12 @@ public abstract class AbstractMutator extends RandomManager {
             }
 
             // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
-            Object mutatedElement = operators.get(getOperator()).mutate(arrayElement);
-            insertElement(arrayNode, index, mutatedElement); // Replace original element with mutated element
-            return true;
+            String operator = getOperator();
+            if (operator != null) {
+                Object mutatedElement = operators.get(operator).mutate(arrayElement);
+                insertElement(arrayNode, index, mutatedElement); // Replace original element with mutated element
+                return true;
+            }
         }
         return false;
     }

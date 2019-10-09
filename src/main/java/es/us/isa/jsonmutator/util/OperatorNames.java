@@ -13,4 +13,5 @@ public class OperatorNames {
     public static final String NULL = "null";
     public static final String BOUNDARY = "boundary";
     public static final String ADD_PROPERTY = "addProperty";
+    public static final String REMOVE_PROPERTY = "removeProperty";
 }
