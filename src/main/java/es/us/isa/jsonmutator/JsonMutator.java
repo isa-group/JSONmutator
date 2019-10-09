@@ -18,6 +18,8 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
  */
 public class JsonMutator {
 
+    private boolean firstIteration; // True when mutateJSON is called the first time, false when it's called recursively
+
     private StringMutator stringMutator;
     private LongMutator longMutator;
 //    private DoubleMutator doubleMutator;
@@ -26,6 +28,8 @@ public class JsonMutator {
 //    private ArrayMutator arrayMutator;
 
     public JsonMutator() {
+        firstIteration = true;
+
         if (Boolean.parseBoolean(readProperty("operator.value.string.enabled")))
             stringMutator = new StringMutator();
         if (Boolean.parseBoolean(readProperty("operator.value.long.enabled")))
@@ -50,18 +54,23 @@ public class JsonMutator {
      * @return The mutated object
      */
     public JsonNode mutateJSON(JsonNode jsonNode) {
+        // TODO:
+//        if (firstIteration) {
+//            jsonNode = mutateFirstLevelJson(jsonNode);
+//        }
+
         if (jsonNode.isObject()) { // If node is object
             Iterator<String> keysIterator = jsonNode.fieldNames();
             String propertyName;
             while (keysIterator.hasNext()) { // Iterate over each object property
                 propertyName = keysIterator.next();
-                mutateProperty((ObjectNode)jsonNode, propertyName); // (Possibly) mutate each property and...
+                mutateElement(jsonNode, propertyName, null); // (Possibly) mutate each property and...
                 if (jsonNode.get(propertyName).isObject() || jsonNode.get(propertyName).isArray()) // ...if property is object or array...
                     ((ObjectNode)jsonNode).replace(propertyName, mutateJSON(jsonNode.get(propertyName))); // ...recursively call this function
             }
         } else if (jsonNode.isArray()) { // If node is array
             for (int arrayIndex=0; arrayIndex<jsonNode.size(); arrayIndex++) { // Iterate over each array element
-                mutateProperty((ArrayNode)jsonNode, arrayIndex); // (Possibly) mutate each element and...
+                mutateElement(jsonNode, null, arrayIndex); // (Possibly) mutate each element and...
                 if (jsonNode.get(arrayIndex).isObject() || jsonNode.get(arrayIndex).isArray()) // ...if element is object or array...
                     ((ArrayNode)jsonNode).set(arrayIndex, mutateJSON(jsonNode.get(arrayIndex))); // ...recursively call this function
             }
@@ -73,47 +82,53 @@ public class JsonMutator {
         return jsonNode;
     }
 
-
-    // NOTE: The following two methods are exactly the same, but one of them is for objects
-    // and the other is for arrays, i.e. one is passed a String (object key) and the
-    // other is passed an integer (array index). I don't know if there's any way to
-    // optimize this (right now it's like duplicated code, even though it's actually not).
-
     /**
-     * Receives an ObjectNode and the name of a property, mutates the value of the
-     * property and inserts the mutated value in the same position.
+     * Receives an ObjectNode or ArrayNode and the property name or index (respectively)
+     * of an element, mutates the value of the element and inserts the mutated value
+     * in the same position.
      */
-    private void mutateProperty(ObjectNode objectNode, String propertyName) {
-        if (longMutator!=null && objectNode.get(propertyName).isIntegralNumber()) {
-            longMutator.mutate(objectNode, propertyName);
-//        } else if (doubleMutator!=null && jsonProperty.getValue().isFloatingPointNumber()) {
-//            doubleMutator.mutate(objectNode, propertyName);
-        } else if (stringMutator!=null && objectNode.get(propertyName).isTextual()) {
-            stringMutator.mutate(objectNode, propertyName);
-        } else if (booleanMutator!=null && objectNode.get(propertyName).isBoolean()) {
-            booleanMutator.mutate(objectNode, propertyName);
-        } else if (objectMutator!=null && objectNode.get(propertyName).isObject()) {
-            objectMutator.mutate(objectNode, propertyName);
+    private void mutateElement(JsonNode jsonNode, String propertyName, Integer index) {
+        boolean isObj = index==null; // If index==null, jsonNode is an object, otherwise it is an array
+        JsonNode element = isObj ? jsonNode.get(propertyName) : jsonNode.get(index);
+        if (longMutator!=null && element.isIntegralNumber()) {
+            if (isObj) longMutator.mutate((ObjectNode) jsonNode, propertyName);
+            else longMutator.mutate((ArrayNode) jsonNode, index);
+//        } else if (doubleMutator!=null && element.isFloatingPointNumber()) {
+//            if (isObj) doubleMutator.mutate((ObjectNode)jsonNode, propertyName);
+//            else doubleMutator.mutate((ArrayNode) jsonNode, index);
+        } else if (stringMutator!=null && element.isTextual()) {
+            if (isObj) stringMutator.mutate((ObjectNode)jsonNode, propertyName);
+            else stringMutator.mutate((ArrayNode) jsonNode, index);
+        } else if (booleanMutator!=null && element.isBoolean()) {
+            if (isObj) booleanMutator.mutate((ObjectNode)jsonNode, propertyName);
+            else booleanMutator.mutate((ArrayNode) jsonNode, index);
+        } else if (objectMutator!=null && element.isObject()) {
+            if (isObj) objectMutator.mutate((ObjectNode)jsonNode, propertyName);
+            else objectMutator.mutate((ArrayNode) jsonNode, index);
         }
     }
 
-    /**
-     * Receives an ArrayNode and the index of an element, mutates the value of the
-     * element and inserts the mutated value in the same position.
-     */
-    private void mutateProperty(ArrayNode arrayNode, int index) {
-        if (longMutator!=null && arrayNode.get(index).isIntegralNumber()) {
-            longMutator.mutate(arrayNode, index);
-//        } else if (doubleMutator!=null && arrayNode.get(index).isFloatingPointNumber()) {
-//            doubleMutator.mutate(objectNode, jsonProperty.getKey());
-        } else if (stringMutator!=null && arrayNode.get(index).isTextual()) {
-            stringMutator.mutate(arrayNode, index);
-        } else if (booleanMutator!=null && arrayNode.get(index).isBoolean()) {
-            booleanMutator.mutate(arrayNode, index);
-        } else if (objectMutator!=null && arrayNode.get(index).isObject()) {
-            objectMutator.mutate(arrayNode, index);
-        }
-    }
+    // TODO:
+//    private JsonNode mutateFirstLevelJson(JsonNode jsonNode) {
+//        if (objectMutator!=null && jsonNode.isObject()) {
+//
+//        }
+//
+//        return null;
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
