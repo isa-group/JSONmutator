@@ -1,5 +1,6 @@
 package es.us.isa.jsonmutator.mutator;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -70,33 +71,7 @@ public abstract class AbstractMutator extends RandomManager {
      * @return True if the mutation was applied, false otherwise
      */
     public boolean mutate(ObjectNode objectNode, String propertyName) {
-        if (shouldApplyMutation()) {
-            Object propertyValue;
-            if (objectNode.get(propertyName).isIntegralNumber()) {
-                propertyValue = objectNode.get(propertyName).asLong(); // Get number to mutate
-            } else if (objectNode.get(propertyName).isFloatingPointNumber()) {
-                propertyValue = objectNode.get(propertyName).asDouble(); // Get floating number to mutate
-            } else if (objectNode.get(propertyName).isTextual()) {
-                propertyValue = objectNode.get(propertyName).asText(); // Get string to mutate
-            } else if (objectNode.get(propertyName).isBoolean()) {
-                propertyValue = objectNode.get(propertyName).asBoolean(); // Get boolean to mutate
-            } else if (objectNode.get(propertyName).isObject() || objectNode.get(propertyName).isArray()) {
-                propertyValue = objectNode.get(propertyName); // Get object or array to mutate
-            } else {
-                throw new IllegalArgumentException("The value of the property '" + propertyName +
-                        "' cannot be mutated. Allowed mutations: strings, ints, floats, booleans, " +
-                        "objects or arrays.");
-            }
-
-            // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
-            String operator = getOperator();
-            if (operator != null) {
-                Object mutatedElement = operators.get(operator).mutate(propertyValue);
-                insertElement(objectNode, propertyName, mutatedElement); // Replace original element with mutated element
-                return true;
-            }
-        }
-        return false;
+        return mutate(objectNode, propertyName, null);
     }
 
     /**
@@ -106,18 +81,24 @@ public abstract class AbstractMutator extends RandomManager {
      * @return True if the mutation was applied, false otherwise
      */
     public boolean mutate(ArrayNode arrayNode, int index) {
+        return mutate(arrayNode, null, index);
+    }
+
+    private boolean mutate(JsonNode jsonNode, String propertyName, Integer index) {
         if (shouldApplyMutation()) {
-            Object arrayElement;
-            if (arrayNode.get(index).isIntegralNumber()) {
-                arrayElement = arrayNode.get(index).asLong(); // Get number to mutate
-            } else if (arrayNode.get(index).isFloatingPointNumber()) {
-                arrayElement = arrayNode.get(index).asDouble(); // Get floating number to mutate
-            } else if (arrayNode.get(index).isTextual()) {
-                arrayElement = arrayNode.get(index).asText(); // Get string to mutate
-            } else if (arrayNode.get(index).isBoolean()) {
-                arrayElement = arrayNode.get(index).asBoolean(); // Get boolean to mutate
-            } else if (arrayNode.get(index).isObject() || arrayNode.get(index).isArray()) {
-                arrayElement = arrayNode.get(index); // Get object or array to mutate
+            boolean isObj = index==null; // If index==null, jsonNode is an object, otherwise it is an array
+            JsonNode element = isObj ? jsonNode.get(propertyName) : jsonNode.get(index);
+            Object elementToMutate;
+            if (element.isIntegralNumber()) {
+                elementToMutate = element.asLong(); // Get number to mutate
+            } else if (element.isFloatingPointNumber()) {
+                elementToMutate = element.asDouble(); // Get floating number to mutate
+            } else if (element.isTextual()) {
+                elementToMutate = element.asText(); // Get string to mutate
+            } else if (element.isBoolean()) {
+                elementToMutate = element.asBoolean(); // Get boolean to mutate
+            } else if (element.isObject() || element.isArray()) {
+                elementToMutate = element; // Get object or array to mutate
             } else {
                 throw new IllegalArgumentException("The element at index position " + index +
                         " cannot be mutated. Allowed mutations: strings, ints, floats, booleans, " +
@@ -127,11 +108,23 @@ public abstract class AbstractMutator extends RandomManager {
             // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
             String operator = getOperator();
             if (operator != null) {
-                Object mutatedElement = operators.get(operator).mutate(arrayElement);
-                insertElement(arrayNode, index, mutatedElement); // Replace original element with mutated element
+                Object mutatedElement = operators.get(operator).mutate(elementToMutate);
+                insertElement(jsonNode, mutatedElement, propertyName, index); // Replace original element with mutated element
                 return true;
             }
         }
         return false;
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+

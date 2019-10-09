@@ -103,8 +103,7 @@ public class ObjectMutator extends AbstractMutator {
                         Object mutatedElement = operators.get(operator).mutate(elementToMutate);
                         operators.remove(operator); // Remove that operator so that the mutation isn't applied twice
                         // Replace original element with mutated element:
-                        if (isObj) insertElement((ObjectNode) jsonNode, propertyName, mutatedElement);
-                        else insertElement((ArrayNode) jsonNode, index, mutatedElement);
+                        insertElement(jsonNode, mutatedElement, propertyName, index);
                         if (!wasMutated)
                             wasMutated = true;
                     }
