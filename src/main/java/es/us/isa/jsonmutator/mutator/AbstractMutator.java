@@ -25,7 +25,7 @@ public abstract class AbstractMutator extends RandomManager {
         operators = new HashMap<>();
     }
 
-    public boolean shouldApplyMutation() {
+    protected boolean shouldApplyMutation() {
         return rand2.nextFloat() <= prob;
     }
 

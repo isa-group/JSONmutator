@@ -49,6 +49,17 @@ public class ObjectMutator extends AbstractMutator {
     }
 
     /**
+     * This function is like {@link ObjectMutator#resetOperators} but setting only
+     * operators that apply to the first level of a JSON object, i.e. addProperty,
+     * removeProperty and empty.
+     */
+    private void resetFirstLevelOperators() {
+        operators.clear();
+        operators.put(OperatorNames.REMOVE_PROPERTY, new ObjectRemovePropertyOperator());
+        operators.put(OperatorNames.ADD_PROPERTY, new ObjectAddPropertyOperator());
+    }
+
+    /**
      * The mutate method of the ObjectMutator is a bit different from others, since
      * multiple mutations (between {@link ObjectMutator#minMutations} and
      * {@link ObjectMutator#maxMutations}) can be applied in the same call.
@@ -95,7 +106,7 @@ public class ObjectMutator extends AbstractMutator {
         boolean wasMutated = false;
         for (int i=0; i<nMutations; i++) {
             JsonNode elementToMutate = isObj ? jsonNode.get(propertyName) : jsonNode.get(index);
-            if (elementToMutate.isObject()) {
+            if (elementToMutate.isObject()) { // The mutation could make the object null or of other type, then stop mutating
                 if (shouldApplyMutation()) {
                     // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                     String operator = getOperator();
@@ -115,5 +126,32 @@ public class ObjectMutator extends AbstractMutator {
         resetOperators(); // After all mutations are applied, reset operators to have all of them in the map again
 
         return wasMutated;
+    }
+
+    /**
+     * This function is to be called for mutating a first-level JSON object, otherwise
+     * the mutate() method should be called. The reason is that a first-level object
+     * is not contained inside any object or array, therefore it is not possible
+     * to use the mutate() method
+     *
+     * @param objectNode The JSON object to mutate
+     * @return The mutated JSON object
+     */
+    public ObjectNode getMutatedObject(ObjectNode objectNode) {
+        resetFirstLevelOperators(); // Use only first level operators
+        int nMutations = rand1.nextInt(minMutations, maxMutations);
+        for (int i=0; i<nMutations; i++) {
+            if (shouldApplyMutation()) {
+                // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
+                String operator = getOperator();
+                if (operator != null) {
+                    objectNode = (ObjectNode)operators.get(operator).mutate(objectNode);
+                    operators.remove(operator); // Remove that operator so that the mutation isn't applied twice
+                }
+            }
+        }
+        resetOperators(); // After all mutations are applied, reset operators to have all of them in the map again
+
+        return objectNode;
     }
 }

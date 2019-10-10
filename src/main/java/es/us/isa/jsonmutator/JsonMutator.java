@@ -54,10 +54,13 @@ public class JsonMutator {
      * @return The mutated object
      */
     public JsonNode mutateJSON(JsonNode jsonNode) {
-        // TODO:
-//        if (firstIteration) {
-//            jsonNode = mutateFirstLevelJson(jsonNode);
-//        }
+        boolean firstIterationOccurred = false; // Used to reset the state of firstIteration attribute
+        if (firstIteration) {
+            firstIteration = false; // Set to false so that this block is not entered again when recursively calling the function
+            firstIterationOccurred = true; // Set to true so that firstIteration is reset to true at the end of this call
+            if (objectMutator!=null && jsonNode.isObject())
+                jsonNode = objectMutator.getMutatedObject((ObjectNode)jsonNode);
+        }
 
         if (jsonNode.isObject()) { // If node is object
             Iterator<String> keysIterator = jsonNode.fieldNames();
@@ -79,6 +82,8 @@ public class JsonMutator {
                     "'mutateJSON(JsonNode)' only accepts two parameter types: ObjectNode and ArrayNode");
         }
 
+        if (firstIterationOccurred)
+            firstIteration = true; // Reset for the next time this function will be called
         return jsonNode;
     }
 
@@ -107,28 +112,6 @@ public class JsonMutator {
             else objectMutator.mutate((ArrayNode) jsonNode, index);
         }
     }
-
-    // TODO:
-//    private JsonNode mutateFirstLevelJson(JsonNode jsonNode) {
-//        if (objectMutator!=null && jsonNode.isObject()) {
-//
-//        }
-//
-//        return null;
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
