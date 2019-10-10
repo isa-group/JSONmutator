@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import es.us.isa.jsonmutator.mutator.AbstractOperator;
 import es.us.isa.jsonmutator.util.OperatorNames;
-import org.apache.commons.lang3.RandomStringUtils;
-
 import java.util.List;
-
 import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**

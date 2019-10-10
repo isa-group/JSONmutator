@@ -3,6 +3,7 @@ package es.us.isa.jsonmutator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import es.us.isa.jsonmutator.mutator.array.ArrayMutator;
 import es.us.isa.jsonmutator.mutator.object.ObjectMutator;
 import es.us.isa.jsonmutator.mutator.value.boolean0.BooleanMutator;
 import es.us.isa.jsonmutator.mutator.value.long0.LongMutator;
@@ -25,7 +26,7 @@ public class JsonMutator {
 //    private DoubleMutator doubleMutator;
     private BooleanMutator booleanMutator;
     private ObjectMutator objectMutator;
-//    private ArrayMutator arrayMutator;
+    private ArrayMutator arrayMutator;
 
     public JsonMutator() {
         firstIteration = true;
@@ -40,8 +41,8 @@ public class JsonMutator {
             booleanMutator = new BooleanMutator();
         if (Boolean.parseBoolean(readProperty("operator.object.enabled")))
             objectMutator = new ObjectMutator();
-//        if (Boolean.parseBoolean(readProperty("operator.array.enabled")))
-//            arrayMutator = new ArrayMutator();
+        if (Boolean.parseBoolean(readProperty("operator.array.enabled")))
+            arrayMutator = new ArrayMutator();
     }
 
     /**
@@ -58,8 +59,10 @@ public class JsonMutator {
         if (firstIteration) {
             firstIteration = false; // Set to false so that this block is not entered again when recursively calling the function
             firstIterationOccurred = true; // Set to true so that firstIteration is reset to true at the end of this call
-            if (objectMutator!=null && jsonNode.isObject())
-                jsonNode = objectMutator.getMutatedObject((ObjectNode)jsonNode);
+            if (objectMutator != null && jsonNode.isObject())
+                jsonNode = objectMutator.getMutatedNode(jsonNode);
+            else if (arrayMutator != null && jsonNode.isArray())
+                jsonNode = arrayMutator.getMutatedNode(jsonNode);
         }
 
         if (jsonNode.isObject()) { // If node is object
@@ -110,6 +113,9 @@ public class JsonMutator {
         } else if (objectMutator!=null && element.isObject()) {
             if (isObj) objectMutator.mutate((ObjectNode)jsonNode, propertyName);
             else objectMutator.mutate((ArrayNode) jsonNode, index);
+        } else if (arrayMutator!=null && element.isArray()) {
+            if (isObj) arrayMutator.mutate((ObjectNode) jsonNode, propertyName);
+            else arrayMutator.mutate((ArrayNode) jsonNode, index);
         }
     }
 }

@@ -100,7 +100,7 @@ public abstract class AbstractMutator extends RandomManager {
             } else if (element.isObject() || element.isArray()) {
                 elementToMutate = element; // Get object or array to mutate
             } else {
-                throw new IllegalArgumentException("The element at index position " + index +
+                throw new IllegalArgumentException("The element " + element.toString() +
                         " cannot be mutated. Allowed mutations: strings, ints, floats, booleans, " +
                         "objects or arrays.");
             }
