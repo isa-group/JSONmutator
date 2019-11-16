@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.jsonmutator.mutator.array.ArrayMutator;
 import es.us.isa.jsonmutator.mutator.object.ObjectMutator;
 import es.us.isa.jsonmutator.mutator.value.boolean0.BooleanMutator;
+import es.us.isa.jsonmutator.mutator.value.double0.DoubleMutator;
 import es.us.isa.jsonmutator.mutator.value.long0.LongMutator;
 import es.us.isa.jsonmutator.mutator.value.string0.StringMutator;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class JsonMutator {
 
     private StringMutator stringMutator;
     private LongMutator longMutator;
-//    private DoubleMutator doubleMutator;
+    private DoubleMutator doubleMutator;
     private BooleanMutator booleanMutator;
     private ObjectMutator objectMutator;
     private ArrayMutator arrayMutator;
@@ -35,8 +36,8 @@ public class JsonMutator {
             stringMutator = new StringMutator();
         if (Boolean.parseBoolean(readProperty("operator.value.long.enabled")))
             longMutator = new LongMutator();
-//        if (Boolean.parseBoolean(readProperty("operator.value.double.enabled")))
-//            doubleMutator = new DoubleMutator();
+        if (Boolean.parseBoolean(readProperty("operator.value.double.enabled")))
+            doubleMutator = new DoubleMutator();
         if (Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")))
             booleanMutator = new BooleanMutator();
         if (Boolean.parseBoolean(readProperty("operator.object.enabled")))
@@ -101,9 +102,9 @@ public class JsonMutator {
         if (longMutator!=null && element.isIntegralNumber()) {
             if (isObj) longMutator.mutate((ObjectNode) jsonNode, propertyName);
             else longMutator.mutate((ArrayNode) jsonNode, index);
-//        } else if (doubleMutator!=null && element.isFloatingPointNumber()) {
-//            if (isObj) doubleMutator.mutate((ObjectNode)jsonNode, propertyName);
-//            else doubleMutator.mutate((ArrayNode) jsonNode, index);
+        } else if (doubleMutator!=null && element.isFloatingPointNumber()) {
+            if (isObj) doubleMutator.mutate((ObjectNode)jsonNode, propertyName);
+            else doubleMutator.mutate((ArrayNode) jsonNode, index);
         } else if (stringMutator!=null && element.isTextual()) {
             if (isObj) stringMutator.mutate((ObjectNode)jsonNode, propertyName);
             else stringMutator.mutate((ArrayNode) jsonNode, index);
