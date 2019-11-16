@@ -9,7 +9,7 @@ import es.us.isa.jsonmutator.util.OperatorNames;
 import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
- * Given a set of boolean mutation operators, the BooleamMutator selects one based
+ * Given a set of boolean mutation operators, the BooleanMutator selects one based
  * on their weights and returns the mutated boolean.
  *
  * @author Alberto Martin-Lopez

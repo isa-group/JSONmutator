@@ -25,6 +25,8 @@ public class ArrayMutator extends AbstractObjectOrArrayMutator {
 //        operators.put(OperatorNames.ADD_ELEMENT, new ArrayAddElementOperator());
         operators.put(OperatorNames.NULL, new NullOperator(ObjectNode.class));
         operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(ObjectNode.class));
+        operators.put(OperatorNames.NULL, new NullOperator(ArrayNode.class));
+        operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(ArrayNode.class));
     }
 
     protected void resetFirstLevelOperators() {

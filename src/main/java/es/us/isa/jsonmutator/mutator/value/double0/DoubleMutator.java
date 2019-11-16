@@ -20,7 +20,7 @@ public class DoubleMutator extends AbstractMutator {
         super();
         prob = Float.parseFloat(readProperty("operator.value.string.prob"));
         operators.put(OperatorNames.REPLACE, new DoubleReplacementOperator());
-        operators.put(OperatorNames.NULL, new NullOperator(String.class));
-        operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(String.class));
+        operators.put(OperatorNames.NULL, new NullOperator(Double.class));
+        operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(Double.class));
     }
 }
