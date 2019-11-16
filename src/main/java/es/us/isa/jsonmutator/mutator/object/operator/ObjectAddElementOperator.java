@@ -26,8 +26,8 @@ public class ObjectAddElementOperator extends AbstractOperator {
     public ObjectAddElementOperator() {
         super();
         weight = Float.parseFloat(readProperty("operator.object.weight." + OperatorNames.ADD_ELEMENT));
-        maxAddedProperties = Integer.parseInt(readProperty("operator.object.addedProperties.max"));
-        minAddedProperties = Integer.parseInt(readProperty("operator.object.addedProperties.min"));
+        maxAddedProperties = Integer.parseInt(readProperty("operator.object.addedElements.max"));
+        minAddedProperties = Integer.parseInt(readProperty("operator.object.addedElements.min"));
         minLong = Long.parseLong(readProperty("operator.value.long.min"));
         maxLong = Long.parseLong(readProperty("operator.value.long.max"));
         minDouble = Double.parseDouble(readProperty("operator.value.double.min"));

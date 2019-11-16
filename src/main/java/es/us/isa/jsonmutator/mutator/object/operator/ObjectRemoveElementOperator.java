@@ -20,8 +20,8 @@ public class ObjectRemoveElementOperator extends AbstractOperator {
     public ObjectRemoveElementOperator() {
         super();
         weight = Float.parseFloat(readProperty("operator.object.weight." + OperatorNames.REMOVE_ELEMENT));
-        maxRemovedProperties = Integer.parseInt(readProperty("operator.object.removedProperties.max"));
-        minRemovedProperties = Integer.parseInt(readProperty("operator.object.removedProperties.min"));
+        maxRemovedProperties = Integer.parseInt(readProperty("operator.object.removedElements.max"));
+        minRemovedProperties = Integer.parseInt(readProperty("operator.object.removedElements.min"));
     }
 
     public Object mutate(Object objectNodeObject) {
