@@ -14,13 +14,15 @@ public class Utilities {
                 return Float.parseFloat(readProperty("operator.value.boolean.weight." + mutationOperator));
             case "String":
                 return Float.parseFloat(readProperty("operator.value.string.weight." + mutationOperator));
+            case "NullNode":
+                return Float.parseFloat(readProperty("operator.value.null.weight." + mutationOperator));
             case "ObjectNode":
                 return Float.parseFloat(readProperty("operator.object.weight." + mutationOperator));
             case "ArrayNode":
                 return Float.parseFloat(readProperty("operator.array.weight." + mutationOperator));
             default:
                 throw new IllegalArgumentException("Wrong class: "+ type +". The class passed to the " +
-                        "constructor must be Long, Double, Boolean or String.");
+                        "constructor must be Long, Double, Boolean, String, NullNode, ObjectNode or ArrayNode.");
         }
     }
 }

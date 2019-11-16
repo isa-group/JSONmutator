@@ -2,6 +2,7 @@ package es.us.isa.jsonmutator.mutator.value.common.operator;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.jsonmutator.mutator.AbstractOperator;
 import es.us.isa.jsonmutator.util.OperatorNames;
@@ -42,17 +43,19 @@ public class ChangeTypeOperator extends AbstractOperator {
         Object returnObject = null;
 
         while (returnObject == null) {
-            if (randomValue <= 1f/6 && !type.equals("Long")) {
+            if (randomValue <= 1f/7 && !type.equals("Long")) {
                 returnObject = rand1.nextLong(minLong, maxLong); // Return random long
-            } else if (randomValue <= 2f/6 && !type.equals("Double")) {
+            } else if (randomValue <= 2f/7 && !type.equals("Double")) {
                 returnObject = rand1.nextUniform(minDouble, maxDouble); // Return random double
-            } else if (randomValue <= 3f/6 && !type.equals("Boolean")) {
+            } else if (randomValue <= 3f/7 && !type.equals("Boolean")) {
                 returnObject = rand2.nextBoolean(); // Return random boolean
-            } else if (randomValue <= 4f/6 && !type.equals("String")) {
+            } else if (randomValue <= 4f/7 && !type.equals("String")) {
                 returnObject = RandomStringUtils.random(rand1.nextInt(minLength, maxLength), true, true); // Return random string
-            } else if (randomValue <= 5f/6) {
+            } else if (randomValue <= 5f/7 && !type.equals("NullNode")) {
+                returnObject = NullNode.getInstance(); // Return null
+            } else if (randomValue <= 6f/7 && !type.equals("ObjectNode")) {
                 returnObject = new ObjectNode(JsonNodeFactory.instance); // Return empty object
-            } else if (randomValue <= 1) {
+            } else if (randomValue <= 1 && !type.equals("ArrayNode")) {
                 returnObject = new ArrayNode(JsonNodeFactory.instance); // Return empty array
             }
         }

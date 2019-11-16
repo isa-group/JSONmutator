@@ -8,6 +8,7 @@ import es.us.isa.jsonmutator.mutator.object.ObjectMutator;
 import es.us.isa.jsonmutator.mutator.value.boolean0.BooleanMutator;
 import es.us.isa.jsonmutator.mutator.value.double0.DoubleMutator;
 import es.us.isa.jsonmutator.mutator.value.long0.LongMutator;
+import es.us.isa.jsonmutator.mutator.value.null0.NullMutator;
 import es.us.isa.jsonmutator.mutator.value.string0.StringMutator;
 import java.util.Iterator;
 
@@ -26,6 +27,7 @@ public class JsonMutator {
     private LongMutator longMutator;
     private DoubleMutator doubleMutator;
     private BooleanMutator booleanMutator;
+    private NullMutator nullMutator;
     private ObjectMutator objectMutator;
     private ArrayMutator arrayMutator;
 
@@ -40,6 +42,8 @@ public class JsonMutator {
             doubleMutator = new DoubleMutator();
         if (Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")))
             booleanMutator = new BooleanMutator();
+        if (Boolean.parseBoolean(readProperty("operator.value.null.enabled")))
+            nullMutator = new NullMutator();
         if (Boolean.parseBoolean(readProperty("operator.object.enabled")))
             objectMutator = new ObjectMutator();
         if (Boolean.parseBoolean(readProperty("operator.array.enabled")))
@@ -111,6 +115,9 @@ public class JsonMutator {
         } else if (booleanMutator!=null && element.isBoolean()) {
             if (isObj) booleanMutator.mutate((ObjectNode)jsonNode, propertyName);
             else booleanMutator.mutate((ArrayNode) jsonNode, index);
+        } else if (nullMutator!=null && element.isNull()) {
+            if (isObj) nullMutator.mutate((ObjectNode)jsonNode, propertyName);
+            else nullMutator.mutate((ArrayNode) jsonNode, index);
         } else if (objectMutator!=null && element.isObject()) {
             if (isObj) objectMutator.mutate((ObjectNode)jsonNode, propertyName);
             else objectMutator.mutate((ArrayNode) jsonNode, index);

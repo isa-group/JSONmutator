@@ -1,5 +1,6 @@
 package es.us.isa.jsonmutator.mutator.value.common.operator;
 
+import com.fasterxml.jackson.databind.node.NullNode;
 import es.us.isa.jsonmutator.mutator.AbstractOperator;
 import es.us.isa.jsonmutator.util.OperatorNames;
 
@@ -18,6 +19,6 @@ public class NullOperator extends AbstractOperator {
     }
 
     public Object mutate(Object elementObject) {
-        return null;
+        return NullNode.instance;
     }
 }

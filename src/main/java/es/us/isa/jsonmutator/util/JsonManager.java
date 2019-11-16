@@ -37,15 +37,15 @@ public class JsonManager {
         } else if (element instanceof Boolean) {
             if (isObj) ((ObjectNode)jsonNode).put(propertyName, (Boolean)element);
             else ((ArrayNode)jsonNode).set(index, (Boolean)element ? BooleanNode.TRUE : BooleanNode.FALSE);
+        } else if (element instanceof NullNode) {
+            if (isObj) ((ObjectNode)jsonNode).putNull(propertyName);
+            else ((ArrayNode)jsonNode).set(index, null);
         } else if (element instanceof ObjectNode) {
             if (isObj) ((ObjectNode)jsonNode).replace(propertyName, (ObjectNode)element);
             else ((ArrayNode)jsonNode).set(index, (ObjectNode)element);
         } else if (element instanceof ArrayNode) {
             if (isObj) ((ObjectNode)jsonNode).replace(propertyName, (ArrayNode)element);
             else ((ArrayNode)jsonNode).set(index, (ArrayNode)element);
-        } else if (element == null) {
-            if (isObj) ((ObjectNode)jsonNode).putNull(propertyName);
-            else ((ArrayNode)jsonNode).set(index, null);
         } else {
             throw new IllegalArgumentException("The element to insert must be a string, int, float, boolean, " +
                     "object, array or null value.");

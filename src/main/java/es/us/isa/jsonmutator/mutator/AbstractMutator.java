@@ -97,6 +97,8 @@ public abstract class AbstractMutator extends RandomManager {
                 elementToMutate = element.asText(); // Get string to mutate
             } else if (element.isBoolean()) {
                 elementToMutate = element.asBoolean(); // Get boolean to mutate
+            } else if (element.isNull()) {
+                elementToMutate = element; // Get null to mutate
             } else if (element.isObject() || element.isArray()) {
                 elementToMutate = element; // Get object or array to mutate
             } else {
