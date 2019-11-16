@@ -10,14 +10,14 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
  *
  * @author Alberto Martin-Lopez
  */
-public class ArrayRemovePropertyOperator extends AbstractOperator {
+public class ArrayRemoveElementOperator extends AbstractOperator {
 
     private int maxRemovedProperties;     // Maximum number of elements to remove from the array
     private int minRemovedProperties;     // Minimum number of elements to remove from the array
 
-    public ArrayRemovePropertyOperator() {
+    public ArrayRemoveElementOperator() {
         super();
-        weight = Float.parseFloat(readProperty("operator.array.weight." + OperatorNames.REMOVE_PROPERTY));
+        weight = Float.parseFloat(readProperty("operator.array.weight." + OperatorNames.REMOVE_ELEMENT));
         maxRemovedProperties = Integer.parseInt(readProperty("operator.array.removedProperties.max"));
         minRemovedProperties = Integer.parseInt(readProperty("operator.array.removedProperties.min"));
     }

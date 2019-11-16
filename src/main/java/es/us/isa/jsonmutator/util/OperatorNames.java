@@ -12,6 +12,6 @@ public class OperatorNames {
     public static final String CHANGE_TYPE = "changeType";
     public static final String NULL = "null";
     public static final String BOUNDARY = "boundary";
-    public static final String ADD_PROPERTY = "addProperty";
-    public static final String REMOVE_PROPERTY = "removeProperty";
+    public static final String ADD_ELEMENT = "addElement";
+    public static final String REMOVE_ELEMENT = "removeElement";
 }

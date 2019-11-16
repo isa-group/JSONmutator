@@ -12,14 +12,14 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
  *
  * @author Alberto Martin-Lopez
  */
-public class ObjectRemovePropertyOperator extends AbstractOperator {
+public class ObjectRemoveElementOperator extends AbstractOperator {
 
     private int maxRemovedProperties;     // Maximum number of properties to remove to the object
     private int minRemovedProperties;     // Minimum number of properties to remove to the object
 
-    public ObjectRemovePropertyOperator() {
+    public ObjectRemoveElementOperator() {
         super();
-        weight = Float.parseFloat(readProperty("operator.object.weight." + OperatorNames.REMOVE_PROPERTY));
+        weight = Float.parseFloat(readProperty("operator.object.weight." + OperatorNames.REMOVE_ELEMENT));
         maxRemovedProperties = Integer.parseInt(readProperty("operator.object.removedProperties.max"));
         minRemovedProperties = Integer.parseInt(readProperty("operator.object.removedProperties.min"));
     }

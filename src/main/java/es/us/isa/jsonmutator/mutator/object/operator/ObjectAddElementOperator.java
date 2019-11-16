@@ -12,7 +12,7 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
  *
  * @author Alberto Martin-Lopez
  */
-public class ObjectAddPropertyOperator extends AbstractOperator {
+public class ObjectAddElementOperator extends AbstractOperator {
 
     private long minLong;
     private long maxLong;
@@ -23,9 +23,9 @@ public class ObjectAddPropertyOperator extends AbstractOperator {
     private int maxAddedProperties;     // Maximum number of properties to add to the object
     private int minAddedProperties;     // Minimum number of properties to add to the object
 
-    public ObjectAddPropertyOperator() {
+    public ObjectAddElementOperator() {
         super();
-        weight = Float.parseFloat(readProperty("operator.object.weight." + OperatorNames.ADD_PROPERTY));
+        weight = Float.parseFloat(readProperty("operator.object.weight." + OperatorNames.ADD_ELEMENT));
         maxAddedProperties = Integer.parseInt(readProperty("operator.object.addedProperties.max"));
         minAddedProperties = Integer.parseInt(readProperty("operator.object.addedProperties.min"));
         minLong = Long.parseLong(readProperty("operator.value.long.min"));

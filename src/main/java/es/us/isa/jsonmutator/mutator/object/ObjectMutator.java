@@ -2,8 +2,8 @@ package es.us.isa.jsonmutator.mutator.object;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.jsonmutator.mutator.AbstractObjectOrArrayMutator;
-import es.us.isa.jsonmutator.mutator.object.operator.ObjectAddPropertyOperator;
-import es.us.isa.jsonmutator.mutator.object.operator.ObjectRemovePropertyOperator;
+import es.us.isa.jsonmutator.mutator.object.operator.ObjectAddElementOperator;
+import es.us.isa.jsonmutator.mutator.object.operator.ObjectRemoveElementOperator;
 import es.us.isa.jsonmutator.mutator.value.common.operator.ChangeTypeOperator;
 import es.us.isa.jsonmutator.mutator.value.common.operator.NullOperator;
 import es.us.isa.jsonmutator.util.OperatorNames;
@@ -22,15 +22,15 @@ public class ObjectMutator extends AbstractObjectOrArrayMutator {
 
     protected void resetOperators() {
         operators.clear();
-        operators.put(OperatorNames.REMOVE_PROPERTY, new ObjectRemovePropertyOperator());
-        operators.put(OperatorNames.ADD_PROPERTY, new ObjectAddPropertyOperator());
+        operators.put(OperatorNames.REMOVE_ELEMENT, new ObjectRemoveElementOperator());
+        operators.put(OperatorNames.ADD_ELEMENT, new ObjectAddElementOperator());
         operators.put(OperatorNames.NULL, new NullOperator(ObjectNode.class));
         operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(ObjectNode.class));
     }
 
     protected void resetFirstLevelOperators() {
         operators.clear();
-        operators.put(OperatorNames.REMOVE_PROPERTY, new ObjectRemovePropertyOperator());
-        operators.put(OperatorNames.ADD_PROPERTY, new ObjectAddPropertyOperator());
+        operators.put(OperatorNames.REMOVE_ELEMENT, new ObjectRemoveElementOperator());
+        operators.put(OperatorNames.ADD_ELEMENT, new ObjectAddElementOperator());
     }
 }
