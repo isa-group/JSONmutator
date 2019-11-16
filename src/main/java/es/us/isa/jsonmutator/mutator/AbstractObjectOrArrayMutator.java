@@ -58,8 +58,8 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
      * The mutate method of the ObjectOrArrayMutator is a bit different from others,
      * since multiple mutations (between {@link AbstractObjectOrArrayMutator#minMutations}
      * and {@link AbstractObjectOrArrayMutator#maxMutations}) can be applied in the
-     * same call. Given an object and the name of a property, mutate the value of that property
-     * with probability {@link AbstractObjectOrArrayMutator#prob}
+     * same call. Given an object and the name of a property, mutate the value of that
+     * property with probability {@link AbstractObjectOrArrayMutator#prob}
      *
      * @return True if at least one mutation was applied, false otherwise
      */
@@ -72,8 +72,8 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
      * The mutate method of the ObjectOrArrayMutator is a bit different from others,
      * since multiple mutations (between {@link AbstractObjectOrArrayMutator#minMutations}
      * and {@link AbstractObjectOrArrayMutator#maxMutations}) can be applied in the
-     * same call. Given an array and the index of an element, mutate the value of
-     * that property with probability {@link AbstractObjectOrArrayMutator#prob}
+     * same call. Given an array and the index of an element, mutate that element
+     * with probability {@link AbstractObjectOrArrayMutator#prob}
      *
      * @return True if at least one mutation was applied, false otherwise
      */
@@ -93,16 +93,24 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
      *                     is an ArrayNode
      * @param index Index of the element of the jsonNode (ArrayNode) that is an
      *              object or array. Must be null if jsonNode is an ObjectNode
+     *
      * @return True if at least one mutation was applied, false otherwise
      */
     protected boolean mutate(JsonNode jsonNode, String propertyName, Integer index) {
         boolean isObj = index==null; // If index==null, jsonNode is an object, otherwise it is an array
+        Boolean elementWasObj = null; // Whether the elementToMutate was an object in the previous iteration or not
         int nMutations = rand1.nextInt(minMutations, maxMutations);
         boolean wasMutated = false;
         for (int i=0; i<nMutations; i++) {
             JsonNode elementToMutate = isObj ? jsonNode.get(propertyName) : jsonNode.get(index);
-            // The mutation could make the object or array null or of other type, then stop mutating:
-            if (elementToMutate.isObject() || elementToMutate.isArray()) {
+            // The mutation could make the object or array null or of other type. Also, it could convert an
+            // object into an array or vice versa. In any case, stop mutating:
+            if (!(elementToMutate.isObject() || elementToMutate.isArray()) || (elementWasObj != null &&
+                            ((elementToMutate.isObject() && !elementWasObj) ||
+                            (elementToMutate.isArray() && elementWasObj)))) {
+                break;
+            } else {
+                elementWasObj = elementToMutate.isObject(); // Update elementWasObj value for next iteration
                 if (shouldApplyMutation()) {
                     // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                     String operator = getOperator();
@@ -115,8 +123,6 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
                             wasMutated = true;
                     }
                 }
-            } else {
-                break;
             }
         }
         resetOperators(); // After all mutations are applied, reset operators to have all of them in the map again
