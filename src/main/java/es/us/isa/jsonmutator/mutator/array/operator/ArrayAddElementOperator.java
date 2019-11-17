@@ -36,6 +36,22 @@ public class ArrayAddElementOperator extends AbstractOperator {
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
     }
 
+    public int getMaxAddedElements() {
+        return maxAddedElements;
+    }
+
+    public void setMaxAddedElements(int maxAddedElements) {
+        this.maxAddedElements = maxAddedElements;
+    }
+
+    public int getMinAddedElements() {
+        return minAddedElements;
+    }
+
+    public void setMinAddedElements(int minAddedElements) {
+        this.minAddedElements = minAddedElements;
+    }
+
     public Object mutate(Object arrayNodeObject) {
         ArrayNode arrayNode = (ArrayNode)arrayNodeObject;
         float randomValue;

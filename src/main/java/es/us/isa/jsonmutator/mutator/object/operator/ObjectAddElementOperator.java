@@ -36,6 +36,22 @@ public class ObjectAddElementOperator extends AbstractOperator {
         maxLength = Integer.parseInt(readProperty("operator.value.string.length.max"));
     }
 
+    public int getMaxAddedProperties() {
+        return maxAddedProperties;
+    }
+
+    public void setMaxAddedProperties(int maxAddedProperties) {
+        this.maxAddedProperties = maxAddedProperties;
+    }
+
+    public int getMinAddedProperties() {
+        return minAddedProperties;
+    }
+
+    public void setMinAddedProperties(int minAddedProperties) {
+        this.minAddedProperties = minAddedProperties;
+    }
+
     public Object mutate(Object objectNodeObject) {
         ObjectNode objectNode = (ObjectNode)objectNodeObject;
         float randomValue;

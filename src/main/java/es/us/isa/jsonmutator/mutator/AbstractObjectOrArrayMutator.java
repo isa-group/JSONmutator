@@ -40,6 +40,22 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
         resetOperators();
     }
 
+    public int getMinMutations() {
+        return minMutations;
+    }
+
+    public void setMinMutations(int minMutations) {
+        this.minMutations = minMutations;
+    }
+
+    public int getMaxMutations() {
+        return maxMutations;
+    }
+
+    public void setMaxMutations(int maxMutations) {
+        this.maxMutations = maxMutations;
+    }
+
     /**
      * Auxiliary function to clear the map of operators and add all of them again.
      * Needed because when one type of mutation is applied, it is removed from the

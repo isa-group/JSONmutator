@@ -25,6 +25,22 @@ public abstract class AbstractMutator extends RandomManager {
         operators = new HashMap<>();
     }
 
+    public float getProb() {
+        return prob;
+    }
+
+    public void setProb(float prob) {
+        this.prob = prob;
+    }
+
+    public HashMap<String, AbstractOperator> getOperators() {
+        return operators;
+    }
+
+    public void setOperators(HashMap<String, AbstractOperator> operators) {
+        this.operators = operators;
+    }
+
     protected boolean shouldApplyMutation() {
         return rand2.nextFloat() <= prob;
     }
@@ -103,8 +119,8 @@ public abstract class AbstractMutator extends RandomManager {
                 elementToMutate = element; // Get object or array to mutate
             } else {
                 throw new IllegalArgumentException("The element " + element.toString() +
-                        " cannot be mutated. Allowed mutations: strings, ints, floats, booleans, " +
-                        "objects or arrays.");
+                        " cannot be mutated. Allowed mutations: strings, ints, floats, booleans," +
+                        " nulls, objects or arrays.");
             }
 
             // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:

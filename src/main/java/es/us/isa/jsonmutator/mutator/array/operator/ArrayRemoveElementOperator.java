@@ -22,6 +22,22 @@ public class ArrayRemoveElementOperator extends AbstractOperator {
         minRemovedElements = Integer.parseInt(readProperty("operator.array.removedElements.min"));
     }
 
+    public int getMaxRemovedElements() {
+        return maxRemovedElements;
+    }
+
+    public void setMaxRemovedElements(int maxRemovedElements) {
+        this.maxRemovedElements = maxRemovedElements;
+    }
+
+    public int getMinRemovedElements() {
+        return minRemovedElements;
+    }
+
+    public void setMinRemovedElements(int minRemovedElements) {
+        this.minRemovedElements = minRemovedElements;
+    }
+
     public Object mutate(Object arrayNodeObject) {
         ArrayNode arrayNode = (ArrayNode)arrayNodeObject;
         int removedElements = rand1.nextInt(minRemovedElements, maxRemovedElements); // Remove between min and max elements to array

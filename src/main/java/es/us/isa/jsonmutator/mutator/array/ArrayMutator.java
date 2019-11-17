@@ -29,8 +29,7 @@ public class ArrayMutator extends AbstractObjectOrArrayMutator {
     }
 
     protected void resetFirstLevelOperators() {
-        operators.clear();
-        operators.put(OperatorNames.REMOVE_ELEMENT, new ArrayRemoveElementOperator());
-        operators.put(OperatorNames.ADD_ELEMENT, new ArrayAddElementOperator());
+        operators.remove(OperatorNames.NULL);
+        operators.remove(OperatorNames.CHANGE_TYPE);
     }
 }

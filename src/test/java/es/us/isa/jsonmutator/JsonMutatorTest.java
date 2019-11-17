@@ -33,9 +33,15 @@ public class JsonMutatorTest {
             JsonNode jsonNode = objectMapper.readTree(jsonString);
             System.out.println("Original JSON object:\n.\n.\n.\n");
             System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
-            JsonNode mutatedJsonNode = mutator.mutateJSON(jsonNode);
-            System.out.println(".\n.\n.\nMutated JSON object:\n.\n.\n.\n");
-            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode.toString(), Object.class)));
+            JsonNode mutatedJsonNode1 = mutator.mutateJson(jsonNode, true);
+            System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
+            JsonNode mutatedJsonNode2 = mutator.mutateJson(jsonNode, false);
+            System.out.println(".\n.\n.\nMultiple order mutation:\n.\n.\n.\n");
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode2.toString(), Object.class)));
+            JsonNode mutatedJsonNode3 = mutator.mutateJson(jsonNode, true);
+            System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode3.toString(), Object.class)));
         } catch (IOException e) {
 //            e.printStackTrace();
             System.out.println("Unable to get properties, it is not formatted in JSON");

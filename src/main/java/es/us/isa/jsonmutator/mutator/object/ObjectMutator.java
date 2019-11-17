@@ -29,8 +29,7 @@ public class ObjectMutator extends AbstractObjectOrArrayMutator {
     }
 
     protected void resetFirstLevelOperators() {
-        operators.clear();
-        operators.put(OperatorNames.REMOVE_ELEMENT, new ObjectRemoveElementOperator());
-        operators.put(OperatorNames.ADD_ELEMENT, new ObjectAddElementOperator());
+        operators.remove(OperatorNames.NULL);
+        operators.remove(OperatorNames.CHANGE_TYPE);
     }
 }

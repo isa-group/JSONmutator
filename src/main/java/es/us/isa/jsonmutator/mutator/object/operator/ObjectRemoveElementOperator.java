@@ -24,6 +24,22 @@ public class ObjectRemoveElementOperator extends AbstractOperator {
         minRemovedProperties = Integer.parseInt(readProperty("operator.object.removedElements.min"));
     }
 
+    public int getMaxRemovedProperties() {
+        return maxRemovedProperties;
+    }
+
+    public void setMaxRemovedProperties(int maxRemovedProperties) {
+        this.maxRemovedProperties = maxRemovedProperties;
+    }
+
+    public int getMinRemovedProperties() {
+        return minRemovedProperties;
+    }
+
+    public void setMinRemovedProperties(int minRemovedProperties) {
+        this.minRemovedProperties = minRemovedProperties;
+    }
+
     public Object mutate(Object objectNodeObject) {
         ObjectNode objectNode = (ObjectNode)objectNodeObject;
         int randomValue;
