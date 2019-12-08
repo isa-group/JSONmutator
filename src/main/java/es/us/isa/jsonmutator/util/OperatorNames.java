@@ -14,4 +14,5 @@ public class OperatorNames {
     public static final String BOUNDARY = "boundary";
     public static final String ADD_ELEMENT = "addElement";
     public static final String REMOVE_ELEMENT = "removeElement";
+    public static final String DISORDER_ELEMENTS = "disorderElements";
 }
