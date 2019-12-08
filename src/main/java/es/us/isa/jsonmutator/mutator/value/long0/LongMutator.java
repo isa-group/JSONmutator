@@ -4,6 +4,7 @@ package es.us.isa.jsonmutator.mutator.value.long0;
 import es.us.isa.jsonmutator.mutator.AbstractMutator;
 import es.us.isa.jsonmutator.mutator.value.common.operator.ChangeTypeOperator;
 import es.us.isa.jsonmutator.mutator.value.common.operator.NullOperator;
+import es.us.isa.jsonmutator.mutator.value.long0.operator.LongMutationOperator;
 import es.us.isa.jsonmutator.mutator.value.long0.operator.LongReplacementOperator;
 import es.us.isa.jsonmutator.mutator.value.string0.operator.StringBoundaryOperator;
 import es.us.isa.jsonmutator.mutator.value.string0.operator.StringMutationOperator;
@@ -24,6 +25,7 @@ public class LongMutator extends AbstractMutator {
         super();
         prob = Float.parseFloat(readProperty("operator.value.long.prob"));
         operators.put(OperatorNames.REPLACE, new LongReplacementOperator());
+        operators.put(OperatorNames.MUTATE, new LongMutationOperator());
         operators.put(OperatorNames.NULL, new NullOperator(Long.class));
         operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(Long.class));
     }
