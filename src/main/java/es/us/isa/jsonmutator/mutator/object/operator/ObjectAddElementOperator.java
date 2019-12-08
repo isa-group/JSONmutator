@@ -71,7 +71,7 @@ public class ObjectAddElementOperator extends AbstractOperator {
                 objectNode.putNull("randomNull"+i);
             } else if (randomValue <= 6f/7) {
                 objectNode.putObject("randomObject"+i);
-            } else if (randomValue <= 1) {
+            } else {
                 objectNode.putArray("randomArray"+i);
             }
         }

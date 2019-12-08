@@ -209,7 +209,7 @@ public class Mutator {
                 objectNode.putNull("randomNull");
             } else if (randomValue <= 6f/7) {
                 objectNode.putObject("randomObject");
-            } else if (randomValue <= 1) {
+            } else {
                 objectNode.putArray("randomArray");
             }
         }
@@ -239,7 +239,7 @@ public class Mutator {
                 arrayNode.addNull();
             } else if (randomValue <= 6f/7) {
                 arrayNode.addObject();
-            } else if (randomValue <= 1) {
+            } else {
                 arrayNode.addArray();
             }
         }
@@ -346,7 +346,7 @@ public class Mutator {
             sb.deleteCharAt(charPosition);
         } else if (randomValue <= 2f/3) { // Add char
             sb.insert(charPosition, RandomStringUtils.random(1, true, true));
-        } else if (randomValue <= 1) { // Change char
+        } else { // Change char
             sb.deleteCharAt(charPosition);
             sb.insert(charPosition, RandomStringUtils.random(1, true, true));
         }
