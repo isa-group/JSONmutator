@@ -49,6 +49,7 @@ public class JsonMutator {
         jsonSize = 0;
         jsonSizeProgress = 0;
         propertyIndex = null;
+        mutationApplied = false;
         singleOrderActive = false;
 
         resetMutators();
@@ -64,12 +65,12 @@ public class JsonMutator {
      */
     public JsonNode mutateJson(JsonNode jsonNode, boolean singleOrder) {
         if (singleOrder) {
-            if (!singleOrderActive) // If the last call to this function was with singleOrder=false...
+            if (!singleOrderActive) // If the last call to this function was with singleOrder=false, then...
                 setUpSingleOrderMutation(); // ... set up parameters for single order mutation...
             singleOrderActive = true; // ... and keep track of this update for next function call
             return singleOrderMutation(jsonNode);
         } else {
-            if (singleOrderActive) // If the last call to this function was with singleOrder=true...
+            if (singleOrderActive) // If the last call to this function was with singleOrder=true, then...
                 resetMutators(); // ... set up parameters for multiple order mutation
             singleOrderActive = false; // ... and keep track of this update for next function call
             return multipleOrderMutation(jsonNode);
@@ -116,7 +117,7 @@ public class JsonMutator {
     /**
      * Auxiliary function to set up the JsonMutator for multiple order mutations.
      * All mutators are re-instantiated, so that their properties are reset
-     * accordingly to the properties file.
+     * according to the properties file.
      */
     private void resetMutators() {
         if (Boolean.parseBoolean(readProperty("operator.value.string.enabled")))
@@ -148,33 +149,35 @@ public class JsonMutator {
      */
     private JsonNode singleOrderMutation(JsonNode jsonNode) {
         boolean firstIterationOccurred = false; // Used to reset the state of firstIteration attribute
+        JsonNode jsonNodeCopy = jsonNode;
         if (firstIteration) {
             firstIteration = false;
             firstIterationOccurred = true;
+            jsonNodeCopy = jsonNode.deepCopy(); // Make a deep copy so that the input object is not altered
         }
 
         if (propertyIndex == null) { // If a property to mutate has not been selected yet
-            jsonSize += jsonNode.size(); // Keep counting the size of the JSON
+            jsonSize += jsonNodeCopy.size(); // Keep counting the size of the JSON
         } else {
             if (propertyIndex == -1) { // If what has to be mutated is the actual first-level JSON
-                if (objectMutator != null && jsonNode.isObject())
-                    jsonNode = objectMutator.getMutatedNode(jsonNode);
-                else if (arrayMutator != null && jsonNode.isArray())
-                    jsonNode = arrayMutator.getMutatedNode(jsonNode);
+                if (objectMutator != null && jsonNodeCopy.isObject())
+                    jsonNodeCopy = objectMutator.getMutatedNode(jsonNodeCopy);
+                else if (arrayMutator != null && jsonNodeCopy.isArray())
+                    jsonNodeCopy = arrayMutator.getMutatedNode(jsonNodeCopy);
                 mutationApplied = true;
             // If property to mutate is in the current object/array being iterated:
-            } else if (propertyIndex >= jsonSizeProgress && propertyIndex < jsonSizeProgress + jsonNode.size()) {
-                if (jsonNode.isObject())
-                    mutateElement(jsonNode, Lists.newArrayList(jsonNode.fieldNames()).get(propertyIndex-jsonSizeProgress), null);
-                else if (jsonNode.isArray())
-                    mutateElement(jsonNode, null, propertyIndex-jsonSizeProgress);
+            } else if (propertyIndex >= jsonSizeProgress && propertyIndex < jsonSizeProgress + jsonNodeCopy.size()) {
+                if (jsonNodeCopy.isObject())
+                    mutateElement(jsonNodeCopy, Lists.newArrayList(jsonNodeCopy.fieldNames()).get(propertyIndex-jsonSizeProgress), null);
+                else if (jsonNodeCopy.isArray())
+                    mutateElement(jsonNodeCopy, null, propertyIndex-jsonSizeProgress);
                 mutationApplied = true;
             }
-            jsonSizeProgress += jsonNode.size(); // Add size of the current object/array
+            jsonSizeProgress += jsonNodeCopy.size(); // Add size of the current object/array
         }
 
         if (!mutationApplied) {
-            Iterator<JsonNode> jsonIterator = jsonNode.elements();
+            Iterator<JsonNode> jsonIterator = jsonNodeCopy.elements();
             while (jsonIterator.hasNext()) { // Keep iterating the JSON...
                 if (mutationApplied) // ... unless the mutation was applied, then stop iterating
                     break;
@@ -188,7 +191,7 @@ public class JsonMutator {
         // At the end of the first iteration, jsonSize will have been populated with the total size of the full JSON:
         if (firstIterationOccurred) {
             propertyIndex = (new RandomDataGenerator()).nextInt(0, jsonSize) - 1; // If -1, mutate first level JSON
-            singleOrderMutation(jsonNode); // Once propertyIndex is set, start iterating again, looking for the property
+            singleOrderMutation(jsonNodeCopy); // Once propertyIndex is set, start iterating again, looking for the property
             if (propertyIndex == -1)
                 singleOrderActive = false; // Reset because operators of object or array were set to default values
             // Reset variables for the next time this function will be called:
@@ -198,52 +201,54 @@ public class JsonMutator {
             propertyIndex = null;
             mutationApplied = false;
         }
-        return jsonNode;
+        return jsonNodeCopy;
     }
 
     /**
      * Apply some random mutations to a JSON object. These mutations are applied to sub-objects and
      * sub-arrays recursively: add new properties, remove existing properties, mutate existing
-     * properties (numbers, strings and booleans), make existing properties null, leave existing
-     * objects and arrays empty ({} or []).
+     * properties (numbers, strings, booleans, etc.), make existing properties null, leave existing
+     * objects and arrays empty ({} or []), etc.
      *
      * @param jsonNode The JSON to mutate
      * @return The mutated JSON
      */
     private JsonNode multipleOrderMutation(JsonNode jsonNode) {
         boolean firstIterationOccurred = false; // Used to reset the state of firstIteration attribute
+        JsonNode jsonNodeCopy = jsonNode;
         if (firstIteration) {
             firstIteration = false; // Set to false so that this block is not entered again when recursively calling the function
             firstIterationOccurred = true; // Set to true so that firstIteration is reset to true at the end of this call
-            if (objectMutator != null && jsonNode.isObject())
-                jsonNode = objectMutator.getMutatedNode(jsonNode);
-            else if (arrayMutator != null && jsonNode.isArray())
-                jsonNode = arrayMutator.getMutatedNode(jsonNode);
+            jsonNodeCopy = jsonNode.deepCopy(); // Make a deep copy so that the input object is not altered
+            if (objectMutator != null && jsonNodeCopy.isObject())
+                jsonNodeCopy = objectMutator.getMutatedNode(jsonNodeCopy);
+            else if (arrayMutator != null && jsonNodeCopy.isArray())
+                jsonNodeCopy = arrayMutator.getMutatedNode(jsonNodeCopy);
         }
 
-        if (jsonNode.isObject()) { // If node is object
-            Iterator<String> keysIterator = jsonNode.fieldNames();
+        if (jsonNodeCopy.isObject()) { // If node is object
+            Iterator<String> keysIterator = jsonNodeCopy.fieldNames();
             String propertyName;
             while (keysIterator.hasNext()) { // Iterate over each object property
                 propertyName = keysIterator.next();
-                mutateElement(jsonNode, propertyName, null); // (Possibly) mutate each property and...
-                if (jsonNode.get(propertyName).isObject() || jsonNode.get(propertyName).isArray()) // ...if property is object or array...
-                    ((ObjectNode)jsonNode).replace(propertyName, multipleOrderMutation(jsonNode.get(propertyName))); // ...recursively call this function
+                mutateElement(jsonNodeCopy, propertyName, null); // (Possibly) mutate each property and...
+                if (jsonNodeCopy.get(propertyName).isObject() || jsonNodeCopy.get(propertyName).isArray()) // ...if property is object or array...
+                    ((ObjectNode)jsonNodeCopy).replace(propertyName, multipleOrderMutation(jsonNodeCopy.get(propertyName))); // ...recursively call this function
             }
-        } else if (jsonNode.isArray()) { // If node is array
-            for (int arrayIndex=0; arrayIndex<jsonNode.size(); arrayIndex++) { // Iterate over each array element
-                mutateElement(jsonNode, null, arrayIndex); // (Possibly) mutate each element and...
-                if (jsonNode.get(arrayIndex).isObject() || jsonNode.get(arrayIndex).isArray()) // ...if element is object or array...
-                    ((ArrayNode)jsonNode).set(arrayIndex, multipleOrderMutation(jsonNode.get(arrayIndex))); // ...recursively call this function
+        } else if (jsonNodeCopy.isArray()) { // If node is array
+            for (int arrayIndex=0; arrayIndex<jsonNodeCopy.size(); arrayIndex++) { // Iterate over each array element
+                mutateElement(jsonNodeCopy, null, arrayIndex); // (Possibly) mutate each element and...
+                if (jsonNodeCopy.get(arrayIndex).isObject() || jsonNodeCopy.get(arrayIndex).isArray()) // ...if element is object or array...
+                    ((ArrayNode)jsonNodeCopy).set(arrayIndex, multipleOrderMutation(jsonNodeCopy.get(arrayIndex))); // ...recursively call this function
             }
         } else {
-            throw new IllegalArgumentException("Wrong type: " + jsonNode.getNodeType() + ". The function" +
+            throw new IllegalArgumentException("Wrong type: " + jsonNodeCopy.getNodeType() + ". The function" +
                     "'mutateJSON(JsonNode)' only accepts two parameter types: ObjectNode and ArrayNode");
         }
 
         if (firstIterationOccurred)
             firstIteration = true; // Reset for the next time this function will be called
-        return jsonNode;
+        return jsonNodeCopy;
     }
 
     /**
