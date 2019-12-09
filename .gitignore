@@ -3,3 +3,4 @@ TODO.txt
 .idea
 .vscode
 out/
+src/test/resources/auth.properties
