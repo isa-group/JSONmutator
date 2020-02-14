@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static es.us.isa.jsonmutator.util.JsonManager.insertElement;
+import static es.us.isa.jsonmutator.util.OperatorNames.REMOVE_ELEMENT;
 import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
@@ -130,6 +131,10 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
                 if (shouldApplyMutation()) {
                     // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                     String operator = getOperator();
+                    if (operator.equals(REMOVE_ELEMENT) && elementToMutate.size() == 0) { // If removeElement is selected, but there are no elements
+                        operators.remove(operator); // Discard this operator
+                        operator = getOperator(); // And select other
+                    }
                     if (operator != null) {
                         Object mutatedElement = operators.get(operator).mutate(elementToMutate);
                         operators.remove(operator); // Remove that operator so that the mutation isn't applied twice
@@ -162,6 +167,10 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
             if (shouldApplyMutation()) {
                 // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                 String operator = getOperator();
+                if (operator.equals(REMOVE_ELEMENT) && jsonNode.size() == 0) { // If removeElement is selected, but there are no elements
+                    operators.remove(operator); // Discard this operator
+                    operator = getOperator(); // And select other
+                }
                 if (operator != null) {
                     jsonNode = (JsonNode)operators.get(operator).mutate(jsonNode);
                     operators.remove(operator); // Remove that operator so that the mutation isn't applied twice

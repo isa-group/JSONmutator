@@ -59,7 +59,7 @@ public class JsonMutator {
      * Perform mutations on a JsonNode, either single or multiple order.
      *
      * @param jsonNode The JsonNode to mutate. Careful!: As of now, this parameter
-     *                 gets mutated after the function is calles.
+     *                 gets mutated after the function is called.
      * @param singleOrder True if you want to apply only one mutation.
      * @return The mutated JsonNode.
      */
