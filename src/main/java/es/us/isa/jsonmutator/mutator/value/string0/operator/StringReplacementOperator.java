@@ -24,6 +24,11 @@ public class StringReplacementOperator extends AbstractOperator {
     }
 
     public Object mutate(Object stringObject) {
-        return RandomStringUtils.random(rand1.nextInt(minLength, maxLength), true, true);
+        if (Boolean.parseBoolean(readProperty("operator.value.string.includeAscii")))
+            return RandomStringUtils.randomAscii(minLength, maxLength);
+        else
+            return RandomStringUtils.random(rand1.nextInt(minLength, maxLength),
+                    Boolean.parseBoolean(readProperty("operator.value.string.includeLetters")),
+                    Boolean.parseBoolean(readProperty("operator.value.string.includeNumbers")));
     }
 }

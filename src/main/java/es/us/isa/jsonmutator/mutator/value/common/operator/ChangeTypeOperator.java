@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.us.isa.jsonmutator.mutator.AbstractOperator;
+import es.us.isa.jsonmutator.mutator.value.string0.operator.StringReplacementOperator;
 import es.us.isa.jsonmutator.util.OperatorNames;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -50,7 +51,7 @@ public class ChangeTypeOperator extends AbstractOperator {
             } else if (randomValue > 2f/7 && randomValue <= 3f/7 && !type.equals("Boolean")) {
                 returnObject = rand2.nextBoolean(); // Return random boolean
             } else if (randomValue > 3f/7 && randomValue <= 4f/7 && !type.equals("String")) {
-                returnObject = RandomStringUtils.random(rand1.nextInt(minLength, maxLength), true, true); // Return random string
+                returnObject = (new StringReplacementOperator()).mutate(null);
             } else if (randomValue > 4f/7 && randomValue <= 5f/7 && !type.equals("NullNode")) {
                 returnObject = NullNode.getInstance(); // Return null
             } else if (randomValue > 5f/7 && randomValue <= 6f/7 && !type.equals("ObjectNode")) {
