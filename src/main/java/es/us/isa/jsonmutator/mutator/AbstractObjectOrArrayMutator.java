@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static es.us.isa.jsonmutator.util.JsonManager.insertElement;
+import static es.us.isa.jsonmutator.util.OperatorNames.DISORDER_ELEMENTS;
 import static es.us.isa.jsonmutator.util.OperatorNames.REMOVE_ELEMENT;
 import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
@@ -131,8 +132,10 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
                 if (shouldApplyMutation()) {
                     // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                     String operator = getOperator();
-                    if (operator.equals(REMOVE_ELEMENT) && elementToMutate.size() == 0) { // If removeElement is selected, but there are no elements
-                        operators.remove(operator); // Discard this operator
+                    // If node is empty and an operator that will make no changes is selected
+                    if (elementToMutate.size() == 0 && (operator.equals(REMOVE_ELEMENT) || operator.equals(DISORDER_ELEMENTS))) {
+                        operators.remove(REMOVE_ELEMENT); // Discard all those operators
+                        operators.remove(DISORDER_ELEMENTS);
                         operator = getOperator(); // And select other
                     }
                     if (operator != null) {
@@ -167,8 +170,10 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
             if (shouldApplyMutation()) {
                 // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                 String operator = getOperator();
-                if (operator.equals(REMOVE_ELEMENT) && jsonNode.size() == 0) { // If removeElement is selected, but there are no elements
-                    operators.remove(operator); // Discard this operator
+                // If node is empty and an operator that will make no changes is selected
+                if (jsonNode.size() == 0 && (operator.equals(REMOVE_ELEMENT) || operator.equals(DISORDER_ELEMENTS))) {
+                    operators.remove(REMOVE_ELEMENT); // Discard all those operators
+                    operators.remove(DISORDER_ELEMENTS);
                     operator = getOperator(); // And select other
                 }
                 if (operator != null) {
