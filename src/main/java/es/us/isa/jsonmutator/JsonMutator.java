@@ -4,8 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.math3.random.RandomDataGenerator;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import es.us.isa.jsonmutator.util.PropertyManager;
 
 import es.us.isa.jsonmutator.mutator.array.ArrayMutator;
 import es.us.isa.jsonmutator.mutator.array.operator.ArrayAddElementOperator;
@@ -30,9 +35,9 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 public class JsonMutator {
 
     private boolean firstIteration; // True when mutateJSON is called the first time, false when it's called recursively
-    private int jsonSize; // For Single Order Mutation (SOM): Size of JSON (sum of all object properties and array elements)
-    private int jsonSizeProgress; // For SOM: Progressive size of JSON (increases on each iteration)
-    private Integer propertyIndex; // For SOM: Index of property (counting the whole JSON) to mutate
+    private int jsonProgress; // For Single Order Mutation (SOM): Size of JSON (sum of all object properties and array elements)
+    private Integer elementIndex; // For SOM: Index of element (counting the whole JSON) to mutate
+    private List<Integer> elementIndexes; // For SOM: Index of elements (counting the whole JSON) subject to be mutated
     private boolean mutationApplied; // For SOM: True if the mutation was applied. Used to stop iterating
     private boolean singleOrderActive; // True if single order mutation was used in the previous execution
 
@@ -45,13 +50,7 @@ public class JsonMutator {
     private ArrayMutator arrayMutator;
 
     public JsonMutator() {
-        firstIteration = true;
-        jsonSize = 0;
-        jsonSizeProgress = 0;
-        propertyIndex = null;
-        mutationApplied = false;
-        singleOrderActive = false;
-
+        resetJsonMutator();
         resetMutators();
     }
 
@@ -115,33 +114,37 @@ public class JsonMutator {
     }
 
     /**
+     * Reset all variables used by constructor and singleOrderMutation method.
+     */
+    private void resetJsonMutator() {
+        firstIteration = true;
+        jsonProgress = 0;
+        singleOrderActive = elementIndex != null && elementIndex != -1;
+        elementIndex = null;
+        elementIndexes = new ArrayList<>();
+        mutationApplied = false;
+    }
+
+    /**
      * Auxiliary function to set up the JsonMutator for multiple order mutations.
      * All mutators are re-instantiated, so that their properties are reset
      * according to the properties file.
      */
     private void resetMutators() {
-        if (Boolean.parseBoolean(readProperty("operator.value.string.enabled")))
-            stringMutator = new StringMutator();
-        if (Boolean.parseBoolean(readProperty("operator.value.long.enabled")))
-            longMutator = new LongMutator();
-        if (Boolean.parseBoolean(readProperty("operator.value.double.enabled")))
-            doubleMutator = new DoubleMutator();
-        if (Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")))
-            booleanMutator = new BooleanMutator();
-        if (Boolean.parseBoolean(readProperty("operator.value.null.enabled")))
-            nullMutator = new NullMutator();
-        if (Boolean.parseBoolean(readProperty("operator.object.enabled")))
-            objectMutator = new ObjectMutator();
-        if (Boolean.parseBoolean(readProperty("operator.array.enabled")))
-            arrayMutator = new ArrayMutator();
+        stringMutator = Boolean.parseBoolean(readProperty("operator.value.string.enabled")) ? new StringMutator() : null;
+        longMutator = Boolean.parseBoolean(readProperty("operator.value.long.enabled")) ? new LongMutator() : null;
+        doubleMutator = Boolean.parseBoolean(readProperty("operator.value.double.enabled")) ? new DoubleMutator() : null;
+        booleanMutator = Boolean.parseBoolean(readProperty("operator.value.boolean.enabled")) ? new BooleanMutator() : null;
+        nullMutator = Boolean.parseBoolean(readProperty("operator.value.null.enabled")) ? new NullMutator() : null;
+        objectMutator = Boolean.parseBoolean(readProperty("operator.object.enabled")) ? new ObjectMutator() : null;
+        arrayMutator = Boolean.parseBoolean(readProperty("operator.array.enabled")) ? new ArrayMutator() : null;
     }
 
     /**
      * Apply a single mutation to a JSON object. This is done in the following way:
-     * First, the JSON is fully iterated over, counting the total number of properties
-     * among all objects and arrays. Then, a random number (propertyIndex) between
-     * -1 and jsonSize is generated. If -1, mutate first-level JSON; otherwise,
-     * start a second iteration phase where the property with that index will be
+     * First, the JSON is fully iterated over, keeping track of all the elements
+     * that are subject to change based on the current configuration of the JSONmutator.
+     * Then, a random element is picked. In a second iteration, that element is
      * looked for and mutated.
      *
      * @param jsonNode The JSON to mutate.
@@ -150,57 +153,55 @@ public class JsonMutator {
     private JsonNode singleOrderMutation(JsonNode jsonNode) {
         boolean firstIterationOccurred = false; // Used to reset the state of firstIteration attribute
         JsonNode jsonNodeCopy = jsonNode;
+        int currentJsonProgress = 0; // Used to locate object property or array element to mutate (within current jsonNode)
         if (firstIteration) {
             firstIteration = false;
             firstIterationOccurred = true;
             jsonNodeCopy = jsonNode.deepCopy(); // Make a deep copy so that the input object is not altered
+            if (isElementSubjectToChange(jsonNodeCopy)) // If first-level JSON can be changed...
+                elementIndexes.add(-1); // ...add it to the list of property indexes
         }
 
-        if (propertyIndex == null) { // If a property to mutate has not been selected yet
-            jsonSize += jsonNodeCopy.size(); // Keep counting the size of the JSON
-        } else {
-            if (propertyIndex == -1) { // If what has to be mutated is the actual first-level JSON
-                if (objectMutator != null && jsonNodeCopy.isObject())
-                    jsonNodeCopy = objectMutator.getMutatedNode(jsonNodeCopy);
-                else if (arrayMutator != null && jsonNodeCopy.isArray())
-                    jsonNodeCopy = arrayMutator.getMutatedNode(jsonNodeCopy);
-                mutationApplied = true;
-            // If property to mutate is in the current object/array being iterated:
-            } else if (propertyIndex >= jsonSizeProgress && propertyIndex < jsonSizeProgress + jsonNodeCopy.size()) {
-                if (jsonNodeCopy.isObject())
-                    mutateElement(jsonNodeCopy, Lists.newArrayList(jsonNodeCopy.fieldNames()).get(propertyIndex-jsonSizeProgress), null);
-                else if (jsonNodeCopy.isArray())
-                    mutateElement(jsonNodeCopy, null, propertyIndex-jsonSizeProgress);
-                mutationApplied = true;
-            }
-            jsonSizeProgress += jsonNodeCopy.size(); // Add size of the current object/array
-        }
-
-        if (!mutationApplied) {
-            Iterator<JsonNode> jsonIterator = jsonNodeCopy.elements();
-            while (jsonIterator.hasNext()) { // Keep iterating the JSON...
-                if (mutationApplied) // ... unless the mutation was applied, then stop iterating
-                    break;
-                JsonNode subJsonNode = jsonIterator.next();
-                if (subJsonNode.isContainerNode()) { // Iterate over properties that are arrays or objects
-                    singleOrderMutation(subJsonNode);
+        Iterator<JsonNode> jsonIterator = jsonNodeCopy.elements();
+        while (jsonIterator.hasNext()) { // Keep iterating the JSON...
+            JsonNode subJsonNode = jsonIterator.next();
+            if (elementIndex == null) { // If an element to mutate has not been selected yet
+                if (isElementSubjectToChange(subJsonNode))
+                    elementIndexes.add(jsonProgress); // Keep track of all properties that are subject to change
+            } else {
+                if (elementIndex == -1) { // If what has to be mutated is the actual first-level JSON
+                    if (objectMutator != null && jsonNodeCopy.isObject())
+                        jsonNodeCopy = objectMutator.getMutatedNode(jsonNodeCopy);
+                    else if (arrayMutator != null && jsonNodeCopy.isArray())
+                        jsonNodeCopy = arrayMutator.getMutatedNode(jsonNodeCopy);
+                    mutationApplied = true;
+                } else if (elementIndex == jsonProgress) { // If element to mutate is the current one
+                    if (jsonNodeCopy.isObject())
+                        mutateElement(jsonNodeCopy, Lists.newArrayList(jsonNodeCopy.fieldNames()).get(currentJsonProgress), null);
+                    else if (jsonNodeCopy.isArray())
+                        mutateElement(jsonNodeCopy, null, currentJsonProgress);
+                    mutationApplied = true;
                 }
+                if (mutationApplied) // If mutation was already applied, stop iterating
+                    break;
             }
+            currentJsonProgress++; // Update iteration indexes
+            jsonProgress++;
+            if (subJsonNode.isContainerNode()) // Iterate over properties that are arrays or objects
+                singleOrderMutation(subJsonNode);
         }
 
-        // At the end of the first iteration, jsonSize will have been populated with the total size of the full JSON:
+        // At the end of the first iteration, all elements subject to change will have been saved, choose one to mutate:
         if (firstIterationOccurred) {
-            propertyIndex = (new RandomDataGenerator()).nextInt(0, jsonSize) - 1; // If -1, mutate first level JSON
-            singleOrderMutation(jsonNodeCopy); // Once propertyIndex is set, start iterating again, looking for the property
-            if (propertyIndex == -1)
-                singleOrderActive = false; // Reset because operators of object or array were set to default values
+            if (elementIndexes.size() > 0) { // If at least one element can be mutated, do so
+                elementIndex = elementIndexes.get(ThreadLocalRandom.current().nextInt(0, elementIndexes.size()));
+                jsonProgress = 0; // Once elementIndex is set, start iterating again, looking for the property
+                singleOrderMutation(jsonNodeCopy);
+            }
             // Reset variables for the next time this function will be called:
-            firstIteration = true;
-            jsonSize = 0;
-            jsonSizeProgress = 0;
-            propertyIndex = null;
-            mutationApplied = false;
+            resetJsonMutator();
         }
+
         return jsonNodeCopy;
     }
 
@@ -241,9 +242,6 @@ public class JsonMutator {
                 if (jsonNodeCopy.get(arrayIndex).isObject() || jsonNodeCopy.get(arrayIndex).isArray()) // ...if element is object or array...
                     ((ArrayNode)jsonNodeCopy).set(arrayIndex, multipleOrderMutation(jsonNodeCopy.get(arrayIndex))); // ...recursively call this function
             }
-        } else {
-            throw new IllegalArgumentException("Wrong type: " + jsonNodeCopy.getNodeType() + ". The function" +
-                    "'mutateJSON(JsonNode)' only accepts two parameter types: ObjectNode and ArrayNode");
         }
 
         if (firstIterationOccurred)
@@ -252,9 +250,25 @@ public class JsonMutator {
     }
 
     /**
+     * Tells whether a given JSON element (object, array, object property or array
+     * element) is subject to change or not.
+     * @param element The element to check, passed as a JsonNode
+     * @return true if the element can be changed, false otherwise
+     */
+    private boolean isElementSubjectToChange(JsonNode element) {
+        return (longMutator!=null && element.isIntegralNumber())
+                || (doubleMutator!=null && element.isFloatingPointNumber())
+                || (stringMutator!=null && element.isTextual())
+                || (booleanMutator!=null && element.isBoolean())
+                || (nullMutator!=null && element.isNull())
+                || (objectMutator!=null && element.isObject())
+                || (arrayMutator!=null && element.isArray());
+    }
+
+    /**
      * Receives an ObjectNode or ArrayNode and the property name or index (respectively)
-     * of an element, mutates the value of the element and inserts the mutated value
-     * in the same position.
+     * of an element, (possibly) mutates the value of the element and inserts the
+     * mutated value in the same position.
      */
     private void mutateElement(JsonNode jsonNode, String propertyName, Integer index) {
         boolean isObj = index==null; // If index==null, jsonNode is an object, otherwise it is an array
@@ -281,6 +295,24 @@ public class JsonMutator {
             if (isObj) arrayMutator.mutate((ObjectNode) jsonNode, propertyName);
             else arrayMutator.mutate((ArrayNode) jsonNode, index);
         }
+    }
+
+    /**
+     * @param propertyName Name of the property in the json-mutation.properties
+     *                     file, e.g., "operator.value.double.enabled"
+     * @param propertyValue Value to set that property with
+     */
+    public void setProperty(String propertyName, String propertyValue) {
+        PropertyManager.setProperty(propertyName, propertyValue);
+        resetMutators();
+    }
+
+    /**
+     * Resets properties to the ones defined in json-mutation.properties
+     */
+    public void resetProperties() {
+        PropertyManager.resetProperties();
+        resetMutators();
     }
 }
 
