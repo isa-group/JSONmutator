@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import es.us.isa.jsonmutator.mutator.AbstractObjectOrArrayMutator;
 import es.us.isa.jsonmutator.mutator.array.operator.ArrayAddElementOperator;
 import es.us.isa.jsonmutator.mutator.array.operator.ArrayDisorderElementsOperator;
+import es.us.isa.jsonmutator.mutator.array.operator.ArrayEmptyOperator;
 import es.us.isa.jsonmutator.mutator.array.operator.ArrayRemoveElementOperator;
 import es.us.isa.jsonmutator.mutator.value.common.operator.ChangeTypeOperator;
 import es.us.isa.jsonmutator.mutator.value.common.operator.NullOperator;
@@ -24,6 +25,7 @@ public class ArrayMutator extends AbstractObjectOrArrayMutator {
     protected void resetOperators() {
         operators.clear();
         operators.put(OperatorNames.REMOVE_ELEMENT, new ArrayRemoveElementOperator());
+        operators.put(OperatorNames.EMPTY, new ArrayEmptyOperator());
         operators.put(OperatorNames.ADD_ELEMENT, new ArrayAddElementOperator());
         operators.put(OperatorNames.DISORDER_ELEMENTS, new ArrayDisorderElementsOperator());
         operators.put(OperatorNames.NULL, new NullOperator(ArrayNode.class));
