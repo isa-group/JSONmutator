@@ -17,4 +17,5 @@ public class OperatorNames {
     public static final String REMOVE_OBJECT_ELEMENT = "removeObjectElement";
     public static final String EMPTY = "empty";
     public static final String DISORDER_ELEMENTS = "disorderElements";
+    public static final String ADD_SPECIAL_CHARACTERS = "addSpecialCharacters";
 }
