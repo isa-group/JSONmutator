@@ -22,7 +22,7 @@ public class ArrayMutator extends AbstractObjectOrArrayMutator {
         super();
     }
 
-    protected void resetOperators() {
+    public void resetOperators() {
         operators.clear();
         operators.put(OperatorNames.REMOVE_ELEMENT, new ArrayRemoveElementOperator());
         operators.put(OperatorNames.EMPTY, new ArrayEmptyOperator());
@@ -32,7 +32,7 @@ public class ArrayMutator extends AbstractObjectOrArrayMutator {
         operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(ArrayNode.class));
     }
 
-    protected void resetFirstLevelOperators() {
+    public void resetFirstLevelOperators() {
         operators.remove(OperatorNames.NULL);
         operators.remove(OperatorNames.CHANGE_TYPE);
     }

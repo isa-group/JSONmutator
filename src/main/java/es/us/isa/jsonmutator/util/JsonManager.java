@@ -51,4 +51,28 @@ public class JsonManager {
                     "object, array or null value.");
         }
     }
+
+    /**
+     * Given a JsonNode (e.g., TextNode, NumberNode, etc.), returns the value
+     * of such node as a basic type (e.g., String, Float, etc.)
+     * @param jsonNode
+     * @return
+     */
+    public static Object getNodeElement(JsonNode jsonNode) {
+        if (jsonNode.isTextual())
+            return jsonNode.asText();
+        else if (jsonNode.isIntegralNumber())
+            return jsonNode.asLong();
+        else if (jsonNode.isFloatingPointNumber())
+            return jsonNode.asDouble();
+        else if (jsonNode.isBoolean())
+            return jsonNode.asBoolean();
+        else if (jsonNode.isNull())
+            return null;
+        else if (jsonNode.isContainerNode())
+            return jsonNode;
+        else
+            throw new IllegalArgumentException("Element not supported. It must be a string, int, float, boolean, " +
+                    "object, array or null value.");
+    }
 }

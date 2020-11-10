@@ -21,7 +21,7 @@ public class ObjectMutator extends AbstractObjectOrArrayMutator {
         super();
     }
 
-    protected void resetOperators() {
+    public void resetOperators() {
         operators.clear();
         operators.put(OperatorNames.REMOVE_ELEMENT, new ObjectRemoveElementOperator());
         operators.put(OperatorNames.REMOVE_OBJECT_ELEMENT, new ObjectRemoveObjectTypeElementOperator());
@@ -30,7 +30,7 @@ public class ObjectMutator extends AbstractObjectOrArrayMutator {
         operators.put(OperatorNames.CHANGE_TYPE, new ChangeTypeOperator(ObjectNode.class));
     }
 
-    protected void resetFirstLevelOperators() {
+    public void resetFirstLevelOperators() {
         operators.remove(OperatorNames.NULL);
         operators.remove(OperatorNames.CHANGE_TYPE);
     }

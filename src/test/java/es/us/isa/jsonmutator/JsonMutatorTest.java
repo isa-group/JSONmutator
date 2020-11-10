@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -176,6 +177,34 @@ public class JsonMutatorTest {
         assertEquals("The mutated string should be equal to the original string", badString, mutatedString);
     }
 
+    @Test
+    public void getAllMutants() {
+        activateAllMutators();
+        List<JsonNode> mutants = jsonMutator.getAllMutants(jsonNode);
+        assertEquals("The number of generated mutants does not match", 192, mutants.size());
+    }
+
+    @Test
+    public void getAllMutantsAsString() {
+        activateAllMutators();
+        List<String> mutants = jsonMutator.getAllMutants(jsonString);
+        assertEquals("The number of generated mutants does not match", 192, mutants.size());
+    }
+
+    @Test
+    public void getAllMutantsProbZero() {
+        activateAllMutators();
+        List<JsonNode> mutants = jsonMutator.getAllMutants(jsonNode, 0);
+        assertEquals("The number of generated mutants does not match", 0, mutants.size());
+    }
+
+    @Test
+    public void getAllMutantsProbZeroAsString() {
+        activateAllMutators();
+        List<String> mutants = jsonMutator.getAllMutants(jsonString, 0);
+        assertEquals("The number of generated mutants does not match", 0, mutants.size());
+    }
+
     private void deactivateAllMutators() {
         jsonMutator.setProperty("operator.value.long.enabled", "false");
         jsonMutator.setProperty("operator.value.double.enabled", "false");
@@ -184,5 +213,15 @@ public class JsonMutatorTest {
         jsonMutator.setProperty("operator.value.null.enabled", "false");
         jsonMutator.setProperty("operator.object.enabled", "false");
         jsonMutator.setProperty("operator.array.enabled", "false");
+    }
+
+    private void activateAllMutators() {
+        jsonMutator.setProperty("operator.value.long.enabled", "true");
+        jsonMutator.setProperty("operator.value.double.enabled", "true");
+        jsonMutator.setProperty("operator.value.string.enabled", "true");
+        jsonMutator.setProperty("operator.value.boolean.enabled", "true");
+        jsonMutator.setProperty("operator.value.null.enabled", "true");
+        jsonMutator.setProperty("operator.object.enabled", "true");
+        jsonMutator.setProperty("operator.array.enabled", "true");
     }
 }

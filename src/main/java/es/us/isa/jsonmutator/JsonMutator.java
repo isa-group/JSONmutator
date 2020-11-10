@@ -1,5 +1,6 @@
 package es.us.isa.jsonmutator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -7,11 +8,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import es.us.isa.jsonmutator.mutator.AbstractMutator;
+import es.us.isa.jsonmutator.mutator.AbstractObjectOrArrayMutator;
+import es.us.isa.jsonmutator.mutator.AbstractOperator;
 import es.us.isa.jsonmutator.util.PropertyManager;
 
 import es.us.isa.jsonmutator.mutator.array.ArrayMutator;
@@ -29,6 +31,8 @@ import es.us.isa.jsonmutator.util.OperatorNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static es.us.isa.jsonmutator.util.JsonManager.getNodeElement;
+import static es.us.isa.jsonmutator.util.JsonManager.insertElement;
 import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
 /**
@@ -41,6 +45,7 @@ public class JsonMutator {
     private static final Logger logger = LogManager.getLogger(JsonMutator.class.getName());
 
     private ObjectMapper objectMapper;
+    private Random rand;
 
     private boolean firstIteration; // True when mutateJSON is called the first time, false when it's called recursively
     private int jsonProgress; // For Single Order Mutation (SOM): Size of JSON (sum of all object properties and array elements)
@@ -48,6 +53,7 @@ public class JsonMutator {
     private List<Integer> elementIndexes; // For SOM: Index of elements (counting the whole JSON) subject to be mutated
     private boolean mutationApplied; // For SOM: True if the mutation was applied. Used to stop iterating
     private boolean singleOrderActive; // True if single order mutation was used in the previous execution
+    private JsonNode rootJson; // For getAllMutants(): root JSON where each property will be mutated in several ways
 
     private StringMutator stringMutator;
     private LongMutator longMutator;
@@ -59,8 +65,132 @@ public class JsonMutator {
 
     public JsonMutator() {
         objectMapper = new ObjectMapper();
+        rand = new Random();
         resetJsonMutator();
         resetMutators();
+    }
+
+    /**
+     * Based on an input JSON, apply all possible single order mutations on it based
+     * on a certain probability and return one mutant per mutation (i.e., one mutant
+     * per property per operator).
+     *
+     * @param jsonNode The JsonNode to mutate.
+     * @param probability The probability based on which to apply each mutation.
+     * @return A list of mutated JsonNodes.
+     */
+    public List<JsonNode> getAllMutants(JsonNode jsonNode, double probability) {
+        return getAllMutants(jsonNode, "", probability);
+    }
+
+    public List<String> getAllMutants(String jsonString, double probability) {
+        try {
+            List<JsonNode> nodeMutants = getAllMutants(objectMapper.readTree(jsonString), probability);
+            return nodeMutants.stream().map(n -> {
+                try {
+                    return objectMapper.writeValueAsString(n);
+                } catch (JsonProcessingException e) {
+                    logger.warn("Some mutant could not be transformed to a string.");
+                    return null;
+                }
+            })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            logger.warn("The string passed as argument is not a JSON object.");
+            return Collections.singletonList(jsonString);
+        }
+    }
+
+    public List<JsonNode> getAllMutants(JsonNode jsonNode) {
+        return getAllMutants(jsonNode, "", 1);
+    }
+
+    public List<String> getAllMutants(String jsonString) {
+        return getAllMutants(jsonString, 1);
+    }
+
+    /**
+     *
+     * @param jsonNode JsonNode of which to obtain all possible mutants (recursively)
+     * @param parentPath Pointer representing the location of the jsonNode within
+     *                   the root (first-level) JSON
+     * @param probability The probability with which a mutation is applied
+     * @return All mutants generated based on the jsonNode passed
+     */
+    private List<JsonNode> getAllMutants(JsonNode jsonNode, String parentPath, double probability) {
+        List<JsonNode> mutants = new ArrayList<>();
+        AbstractMutator mutator = getMutator(jsonNode);
+
+        boolean firstIterationOccurred = false; // Used to reset JsonMutator for next execution
+        if (firstIteration) {
+            setUpSingleOrderMutation(); // Mutants are only generated as single order mutations
+
+            firstIteration = false;
+            firstIterationOccurred = true;
+            rootJson = jsonNode.deepCopy(); // Make a deep copy so that the input object is not altered
+
+            // Get mutants of the first-level JSON
+            if (mutator != null) {
+                ((AbstractObjectOrArrayMutator)mutator).resetFirstLevelOperators();
+                for (AbstractOperator operator : mutator.getOperators().values()) {
+                    JsonNode jsonNodeCopy = jsonNode.deepCopy();
+                    if (rand.nextFloat() < probability)
+                        mutants.add((JsonNode) operator.mutate(jsonNodeCopy));
+                }
+                ((AbstractObjectOrArrayMutator)mutator).resetOperators();
+            }
+        }
+
+        Iterator<JsonNode> jsonIterator = jsonNode.elements();
+        int i = 0;
+        while (jsonIterator.hasNext()) {
+            JsonNode element = jsonIterator.next();
+            mutator = getMutator(element);
+
+            String propertyName = jsonNode.isObject() ? Lists.newArrayList(jsonNode.fieldNames()).get(i) : null;
+            Integer index = jsonNode.isArray() ? i : null;
+
+            if (mutator != null) { // Apply all operators, and generate one mutant for each
+                for (AbstractOperator operator : mutator.getOperators().values()) {
+                    if (rand.nextFloat() < probability)
+                        mutants.add(getMutatedJson(rootJson, parentPath, propertyName, index, operator));
+                }
+            }
+
+            if (element.isContainerNode()) // Iterate over children and add its mutants
+                mutants.addAll(getAllMutants(element, parentPath + "/" + (index==null ? propertyName : index), probability));
+
+            i++;
+        }
+
+        // At the end of the first iteration, reset JsonMutator for next call
+        if (firstIterationOccurred) {
+            rootJson = null;
+            firstIteration = true;
+            resetMutators();
+        }
+
+        return mutants;
+    }
+
+    /**
+     *
+     * @param jsonNode JSON where to mutate some element (can be nested)
+     * @param jsonPath Pointer to the element which is the parent of the element
+     *                 to mutate, e.g., "/prop1/arrayProp"
+     * @param propertyName Name of the property to mutate, null if is an array element
+     * @param index Index of the element to mutate, null if is an object property
+     * @param operator Mutation operator to apply to the element
+     * @return The modified jsonNode
+     */
+    private JsonNode getMutatedJson(JsonNode jsonNode, String jsonPath, String propertyName, Integer index, AbstractOperator operator) {
+        JsonNode jsonNodeCopy = jsonNode.deepCopy();
+        JsonNode element = jsonNodeCopy.at(jsonPath + "/" + (index==null ? propertyName : index));
+        Object mutatedElement = operator.mutate(getNodeElement(element));
+        insertElement(jsonNodeCopy.at(jsonPath), mutatedElement, propertyName, index);
+
+        return jsonNodeCopy;
     }
 
     /**
@@ -95,7 +225,7 @@ public class JsonMutator {
         try {
             return objectMapper.writeValueAsString(mutateJson(objectMapper.readTree(jsonString), singleOrder));
         } catch (IOException e) {
-            logger.info("The string passed as argument is not a JSON object.");
+            logger.warn("The string passed as argument is not a JSON object.");
             return jsonString;
         }
     }
@@ -218,7 +348,7 @@ public class JsonMutator {
         // At the end of the first iteration, all elements subject to change will have been saved, choose one to mutate:
         if (firstIterationOccurred) {
             if (elementIndexes.size() > 0) { // If at least one element can be mutated, do so
-                elementIndex = elementIndexes.get(ThreadLocalRandom.current().nextInt(0, elementIndexes.size()));
+                elementIndex = elementIndexes.get(rand.nextInt(elementIndexes.size()));
                 jsonProgress = 0; // Once elementIndex is set, start iterating again, looking for the property
                 singleOrderMutation(jsonNodeCopy);
             }
@@ -321,6 +451,17 @@ public class JsonMutator {
         }
     }
 
+    private AbstractMutator getMutator(JsonNode jsonNode) {
+        if (jsonNode.isIntegralNumber()) return longMutator;
+        else if (jsonNode.isFloatingPointNumber()) return doubleMutator;
+        else if (jsonNode.isTextual()) return stringMutator;
+        else if (jsonNode.isBoolean()) return booleanMutator;
+        else if (jsonNode.isNull()) return nullMutator;
+        else if (jsonNode.isObject()) return objectMutator;
+        else if (jsonNode.isArray()) return arrayMutator;
+        else return null;
+    }
+
     /**
      * @param propertyName Name of the property in the json-mutation.properties
      *                     file, e.g., "operator.value.double.enabled"
@@ -339,12 +480,3 @@ public class JsonMutator {
         resetMutators();
     }
 }
-
-
-
-
-
-
-
-
-

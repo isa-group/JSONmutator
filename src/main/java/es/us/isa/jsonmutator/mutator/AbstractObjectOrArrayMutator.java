@@ -65,14 +65,14 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
      * Needed because when one type of mutation is applied, it is removed from the
      * map so that it is not selected again.
      */
-    protected abstract void resetOperators();
+    public abstract void resetOperators();
 
     /**
      * This function is like {@link AbstractObjectOrArrayMutator#resetOperators}
      * but setting only operators that apply to the first level of a JSON array,
      * i.e. addProperty, removeProperty and empty.
      */
-    protected abstract void resetFirstLevelOperators();
+    public abstract void resetFirstLevelOperators();
 
     /**
      * The mutate method of the ObjectOrArrayMutator is a bit different from others,
