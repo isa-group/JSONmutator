@@ -1,10 +1,12 @@
 package es.us.isa.jsonmutator;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +26,8 @@ import es.us.isa.jsonmutator.mutator.value.long0.LongMutator;
 import es.us.isa.jsonmutator.mutator.value.null0.NullMutator;
 import es.us.isa.jsonmutator.mutator.value.string0.StringMutator;
 import es.us.isa.jsonmutator.util.OperatorNames;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
 
@@ -33,6 +37,10 @@ import static es.us.isa.jsonmutator.util.PropertyManager.readProperty;
  * @author Alberto Martin-Lopez
  */
 public class JsonMutator {
+
+    private static final Logger logger = LogManager.getLogger(JsonMutator.class.getName());
+
+    private ObjectMapper objectMapper;
 
     private boolean firstIteration; // True when mutateJSON is called the first time, false when it's called recursively
     private int jsonProgress; // For Single Order Mutation (SOM): Size of JSON (sum of all object properties and array elements)
@@ -50,6 +58,7 @@ public class JsonMutator {
     private ArrayMutator arrayMutator;
 
     public JsonMutator() {
+        objectMapper = new ObjectMapper();
         resetJsonMutator();
         resetMutators();
     }
@@ -72,6 +81,22 @@ public class JsonMutator {
                 resetMutators(); // ... set up parameters for multiple order mutation
             singleOrderActive = false; // ... and keep track of this update for next function call
             return multipleOrderMutation(jsonNode);
+        }
+    }
+
+    /**
+     * Perform mutations on a JSON string, either single or multiple order.
+     *
+     * @param jsonString The stringified JSON to mutate.
+     * @param singleOrder True if you want to apply only one mutation.
+     * @return The mutated stringified JSON.
+     */
+    public String mutateJson(String jsonString, boolean singleOrder) {
+        try {
+            return objectMapper.writeValueAsString(mutateJson(objectMapper.readTree(jsonString), singleOrder));
+        } catch (IOException e) {
+            logger.info("The string passed as argument is not a JSON object.");
+            return jsonString;
         }
     }
 

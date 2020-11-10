@@ -17,27 +17,20 @@ import static org.junit.Assert.fail;
 public class JsonMutatorTest {
 
     private JsonNode jsonNode = null;
+    private String jsonString = null;
     private ObjectMapper objectMapper;
     private JsonMutator jsonMutator;
 
     @Before
     public void setUp() {
-        // Read JSON file
-        String jsonString = "";
+        objectMapper = new ObjectMapper();
+
+        // Read JSON file and create JSON node and JSON string
         try {
-            jsonString = new String(Files.readAllBytes(Paths.get("src/test/resources/test-object.json")));
+            jsonNode = objectMapper.readTree(new String(Files.readAllBytes(Paths.get("src/test/resources/test-object.json"))));
+            jsonString = objectMapper.writeValueAsString(jsonNode);
         } catch (IOException e) {
             System.out.println("Unable to read JSON");
-            e.printStackTrace();
-            fail();
-        }
-
-        // Create JsonNode
-        objectMapper = new ObjectMapper();
-        try {
-            jsonNode = objectMapper.readTree(jsonString);
-        } catch (IOException e) {
-            System.out.println("Unable to get properties, it is not formatted in JSON");
             e.printStackTrace();
             fail();
         }
@@ -117,6 +110,70 @@ public class JsonMutatorTest {
 //        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
         assertNotEquals("The mutated JSON should be different to the original JSON", jsonNode, mutatedJsonNode1);
+    }
+
+    @Test
+    public void singleOrderMutationAsString() throws IOException {
+        jsonMutator.setProperty("operator.value.long.enabled", "true"); // Make sure at least one mutator is enabled
+        String mutatedJsonString1 = jsonMutator.mutateJson(jsonString, true);
+//        System.out.println("Original JSON object:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
+//        System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
+        assertNotEquals("The mutated JSON should be different to the original JSON", jsonString, mutatedJsonString1);
+    }
+
+    @Test
+    public void multipleOrderMutationAsString() throws IOException {
+        jsonMutator.setProperty("operator.value.long.enabled", "true"); // Make sure at least one mutator is enabled and its probability is set to 1
+        jsonMutator.setProperty("operator.value.long.prob", "1");
+        String mutatedJsonString1 = jsonMutator.mutateJson(jsonString, false);
+//        System.out.println("Original JSON object:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
+//        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
+        assertNotEquals("The mutated JSON should be different to the original JSON", jsonString, mutatedJsonString1);
+    }
+
+    @Test
+    public void singleOrderMutationCannotBeAppliedAsString() throws IOException {
+        deactivateAllMutators(); // Deactivate all mutators
+        String mutatedJsonString1 = jsonMutator.mutateJson(jsonString, true);
+//        System.out.println("Original JSON object:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
+//        System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
+        assertEquals("The mutated JSON should be equal to the original JSON", jsonString, mutatedJsonString1);
+    }
+
+    @Test
+    public void multipleOrderMutationCannotBeAppliedAsString() throws IOException {
+        deactivateAllMutators(); // Deactivate all mutators
+        String mutatedJsonString1 = jsonMutator.mutateJson(jsonString, false);
+//        System.out.println("Original JSON object:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
+//        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
+        assertEquals("The mutated JSON should be equal to the original JSON", jsonString, mutatedJsonString1);
+    }
+
+    @Test
+    public void resetPropertiesAsString() {
+        deactivateAllMutators(); // Deactivate all mutators
+        jsonMutator.resetProperties();
+        String mutatedJsonString1 = jsonMutator.mutateJson(jsonString, false);
+//        System.out.println("Original JSON object:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
+//        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
+//        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
+        assertNotEquals("The mutated JSON should be different to the original JSON", jsonString, mutatedJsonString1);
+    }
+
+    @Test
+    public void badJsonString() {
+        String badString = "bad string";
+        String mutatedString = jsonMutator.mutateJson(badString, true);
+        assertEquals("The mutated string should be equal to the original string", badString, mutatedString);
     }
 
     private void deactivateAllMutators() {
