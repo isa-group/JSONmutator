@@ -57,8 +57,7 @@ public class JsonMutator {
     /**
      * Perform mutations on a JsonNode, either single or multiple order.
      *
-     * @param jsonNode The JsonNode to mutate. Careful!: As of now, this parameter
-     *                 gets mutated after the function is called.
+     * @param jsonNode The JsonNode to mutate.
      * @param singleOrder True if you want to apply only one mutation.
      * @return The mutated JsonNode.
      */
@@ -182,11 +181,11 @@ public class JsonMutator {
                         mutateElement(jsonNodeCopy, null, currentJsonProgress);
                     mutationApplied = true;
                 }
-                if (mutationApplied) // If mutation was already applied, stop iterating
-                    break;
             }
             currentJsonProgress++; // Update iteration indexes
             jsonProgress++;
+            if (mutationApplied) // If mutation was already applied, stop iterating
+                break;
             if (subJsonNode.isContainerNode()) // Iterate over properties that are arrays or objects
                 singleOrderMutation(subJsonNode);
         }

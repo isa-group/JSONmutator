@@ -80,7 +80,7 @@ public class JsonMutatorTest {
         JsonNode mutatedJsonNode1 = jsonMutator.mutateJson(jsonNode, false);
 //        System.out.println("Original JSON object:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
-//        System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+//        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
         assertNotEquals("The mutated JSON should be different to the original JSON", jsonNode, mutatedJsonNode1);
     }
@@ -102,7 +102,7 @@ public class JsonMutatorTest {
         JsonNode mutatedJsonNode1 = jsonMutator.mutateJson(jsonNode, false);
 //        System.out.println("Original JSON object:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
-//        System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+//        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
         assertEquals("The mutated JSON should be equal to the original JSON", jsonNode, mutatedJsonNode1);
     }
@@ -114,7 +114,7 @@ public class JsonMutatorTest {
         JsonNode mutatedJsonNode1 = jsonMutator.mutateJson(jsonNode, false);
 //        System.out.println("Original JSON object:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(jsonNode.toString(), Object.class)));
-//        System.out.println(".\n.\n.\nSingle order mutation:\n.\n.\n.\n");
+//        System.out.println(".\n.\n.\Multiple order mutation:\n.\n.\n.\n");
 //        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(mutatedJsonNode1.toString(), Object.class)));
         assertNotEquals("The mutated JSON should be different to the original JSON", jsonNode, mutatedJsonNode1);
     }
