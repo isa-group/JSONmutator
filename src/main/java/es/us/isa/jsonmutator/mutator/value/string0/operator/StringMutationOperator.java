@@ -22,12 +22,12 @@ public class StringMutationOperator extends AbstractOperator {
     public Object mutate(Object stringObject) {
         String string = (String)stringObject;
         StringBuilder sb = new StringBuilder(string);
-        int charPosition = rand1.nextInt(0, string.length()-1);
+        int charPosition = string.length()==0 ? 0 : rand1.nextInt(0, string.length()-1);
         float randomValue = rand2.nextFloat();
 
-        if (randomValue <= 1f/3) { // Remove char
+        if (randomValue <= 1f/3 && string.length()>0) { // Remove char
             sb.deleteCharAt(charPosition);
-        } else if (randomValue <= 2f/3)  { // Add char
+        } else if (randomValue <= 2f/3 || string.length()==0)  { // Add char
             sb.insert(charPosition, RandomStringUtils.random(1, true, true));
         } else { // Replace char
             sb.deleteCharAt(charPosition);
