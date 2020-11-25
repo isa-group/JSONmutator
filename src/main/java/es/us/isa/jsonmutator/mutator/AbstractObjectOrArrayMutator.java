@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.util.Iterator;
+
 import static es.us.isa.jsonmutator.util.JsonManager.insertElement;
 import static es.us.isa.jsonmutator.util.OperatorNames.DISORDER_ELEMENTS;
 import static es.us.isa.jsonmutator.util.OperatorNames.REMOVE_ELEMENT;
@@ -174,6 +176,7 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
             if (shouldApplyMutation()) {
                 // Mutate element by randomly choosing one mutation operator among 'operators' and applying the mutation:
                 String operator = getOperator();
+
                 // If node is empty and an operator that will make no changes is selected
                 if (jsonNode.size() == 0 && (operator.equals(REMOVE_ELEMENT) || operator.equals(REMOVE_OBJECT_ELEMENT) || operator.equals(DISORDER_ELEMENTS) || operator.equals(EMPTY))) {
                     operators.remove(REMOVE_ELEMENT); // Discard all those operators
@@ -182,6 +185,23 @@ public abstract class AbstractObjectOrArrayMutator extends AbstractMutator {
                     operators.remove(EMPTY);
                     operator = getOperator(); // And select other
                 }
+
+                // If node is an object and REMOVE_OBJECT_ELEMENT op. was selected, check that there are nested objects, otherwise choose a different op.
+                if (operator.equals(REMOVE_OBJECT_ELEMENT)) {
+                    boolean containsObjects = false;
+                    Iterator<JsonNode> jsonIterator = jsonNode.elements();
+                    while (jsonIterator.hasNext()) {
+                        if (jsonIterator.next().isObject()) {
+                            containsObjects = true;
+                            break;
+                        }
+                    }
+                    if (!containsObjects) {
+                        operators.remove(REMOVE_OBJECT_ELEMENT); // This operator can't be applied, discard it
+                        operator = getOperator(); // And select other
+                    }
+                }
+
                 if (operator != null) {
                     jsonNode = (JsonNode)operators.get(operator).mutate(jsonNode);
                     operators.remove(operator); // Remove that operator so that the mutation isn't applied twice

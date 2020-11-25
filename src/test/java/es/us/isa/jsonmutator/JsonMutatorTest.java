@@ -178,6 +178,120 @@ public class JsonMutatorTest {
     }
 
     @Test
+    public void testAlwaysMutateEmptyArray() {
+        activateAllMutators();
+
+        String originalObjectString = "[]";
+
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+    }
+
+    @Test
+    public void testAlwaysMutateEmptyObject() {
+        activateAllMutators();
+
+        String originalObjectString = "{}";
+
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+    }
+
+    @Test
+    public void testAlwaysMutateObject() {
+        activateAllMutators();
+
+        String originalObjectString = "{\"prop1\": \"val1\", \"prop2\": [1, true, {}]}";
+
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+        assertNotEquals(originalObjectString, jsonMutator.mutateJson(originalObjectString, true));
+    }
+
+    @Test
     public void getAllMutants() {
         activateAllMutators();
         List<JsonNode> mutants = jsonMutator.getAllMutants(jsonNode);

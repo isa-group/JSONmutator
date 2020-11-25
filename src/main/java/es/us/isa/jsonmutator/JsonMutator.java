@@ -316,26 +316,26 @@ public class JsonMutator {
                 elementIndexes.add(-1); // ...add it to the list of property indexes
         }
 
+        if (elementIndex != null && elementIndex == -1 && !mutationApplied) { // If what has to be mutated is the actual first-level JSON
+            if (objectMutator != null && jsonNodeCopy.isObject())
+                jsonNodeCopy = objectMutator.getMutatedNode(jsonNodeCopy);
+            else if (arrayMutator != null && jsonNodeCopy.isArray())
+                jsonNodeCopy = arrayMutator.getMutatedNode(jsonNodeCopy);
+            mutationApplied = true;
+        }
+
         Iterator<JsonNode> jsonIterator = jsonNodeCopy.elements();
         while (jsonIterator.hasNext()) { // Keep iterating the JSON...
             JsonNode subJsonNode = jsonIterator.next();
             if (elementIndex == null) { // If an element to mutate has not been selected yet
                 if (isElementSubjectToChange(subJsonNode))
                     elementIndexes.add(jsonProgress); // Keep track of all properties that are subject to change
-            } else {
-                if (elementIndex == -1) { // If what has to be mutated is the actual first-level JSON
-                    if (objectMutator != null && jsonNodeCopy.isObject())
-                        jsonNodeCopy = objectMutator.getMutatedNode(jsonNodeCopy);
-                    else if (arrayMutator != null && jsonNodeCopy.isArray())
-                        jsonNodeCopy = arrayMutator.getMutatedNode(jsonNodeCopy);
-                    mutationApplied = true;
-                } else if (elementIndex == jsonProgress) { // If element to mutate is the current one
-                    if (jsonNodeCopy.isObject())
-                        mutateElement(jsonNodeCopy, Lists.newArrayList(jsonNodeCopy.fieldNames()).get(currentJsonProgress), null);
-                    else if (jsonNodeCopy.isArray())
-                        mutateElement(jsonNodeCopy, null, currentJsonProgress);
-                    mutationApplied = true;
-                }
+            } else if (elementIndex == jsonProgress) { // If element to mutate is the current one
+                if (jsonNodeCopy.isObject())
+                    mutateElement(jsonNodeCopy, Lists.newArrayList(jsonNodeCopy.fieldNames()).get(currentJsonProgress), null);
+                else if (jsonNodeCopy.isArray())
+                    mutateElement(jsonNodeCopy, null, currentJsonProgress);
+                mutationApplied = true;
             }
             currentJsonProgress++; // Update iteration indexes
             jsonProgress++;
