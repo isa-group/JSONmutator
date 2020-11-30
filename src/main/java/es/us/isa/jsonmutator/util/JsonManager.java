@@ -55,8 +55,8 @@ public class JsonManager {
     /**
      * Given a JsonNode (e.g., TextNode, NumberNode, etc.), returns the value
      * of such node as a basic type (e.g., String, Float, etc.)
-     * @param jsonNode
-     * @return
+     * @param jsonNode The object or array whose value will be returned as a basic type
+     * @return The value of the element as a basic type
      */
     public static Object getNodeElement(JsonNode jsonNode) {
         if (jsonNode.isTextual())

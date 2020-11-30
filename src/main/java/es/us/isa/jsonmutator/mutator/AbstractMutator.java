@@ -52,7 +52,7 @@ public abstract class AbstractMutator extends RandomManager {
      * 1.- StringReplacement. {@code weight=0.1}. <br>
      * 2.- StringMutation. {@code weight=0.4}. <br>
      * 3.- StringBoundary. {@code weight=0.2}. <br>
-     * - {@code randomFloat=0.367} => StringMutation is selected, because the float
+     * - {@code randomFloat=0.367}: StringMutation is selected, because the float
      * falls in the range 0.1-0.5 (0.1+0.4)
      *
      * @return The name of the mutation operator selected, or null if the map doesn't
@@ -84,6 +84,8 @@ public abstract class AbstractMutator extends RandomManager {
      * Given an object and the name of a property, mutate the value of that property
      * with probability {@link AbstractMutator#prob}
      *
+     * @param objectNode the object to be mutated
+     * @param propertyName the property name of the object to be mutated
      * @return True if the mutation was applied, false otherwise
      */
     public boolean mutate(ObjectNode objectNode, String propertyName) {
@@ -94,6 +96,8 @@ public abstract class AbstractMutator extends RandomManager {
      * Given an array and the index of an element, mutate that element
      * with probability {@link AbstractMutator#prob}
      *
+     * @param arrayNode the array that contains the element to be mutated
+     * @param index the index of the element to be mutated
      * @return True if the mutation was applied, false otherwise
      */
     public boolean mutate(ArrayNode arrayNode, int index) {
