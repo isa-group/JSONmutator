@@ -6,10 +6,23 @@
 
     <groupId>es.us.isa</groupId>
     <artifactId>json-mutator</artifactId>
+    <name>JSONmutator</name>
     <version>0.0.1-SNAPSHOT</version>
+    <description>A Java library for mutating JSON objects.</description>
+
+    <url>https://github.com/isa-group/JSONmutator</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3 (GPLv3)</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
 
     <scm>
+        <connection>scm:git:https://github.com/isa-group/JSONmutator.git</connection>
         <developerConnection>scm:git:https://github.com/isa-group/JSONmutator.git</developerConnection>
+        <url>https://github.com/isa-group/JSONmutator/tree/master</url>
     </scm>
 
     <developers>
